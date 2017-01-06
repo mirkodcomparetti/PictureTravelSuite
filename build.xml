@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="PictureTravelSuite">
+	<property environment="env"/>
+	<!--property name="ECLIPSE_HOME" value="../../../../Program Files/eclipse/java-mars/eclipse/"/-->
+	<property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.8"/>
+	<property name="source" value="1.8"/>
+	<property name="src" location="src"/>
+    <property name="version" value="3.5"/>
+	<property name="MainName" value="PictureTravelSuite"/>
+	<property name="MainClass" value="PictureTravelSuiteClass"/>
+	<property name="build" location="bin"/>
+	<property name="dist" location="dist"/>
+	<property name="distv" value="dist"/>
+	<path id="PictureTravelSuite.classpath">
+		<pathelement location="${build}"/>
+	</path>
+	<target name="init">
+		<mkdir dir="${build}"/>
+		
+		<mkdir dir="${dist}"/>
+		<copy includeemptydirs="false" todir="${build}">
+			<fileset dir="${src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+		<delete file="MANIFEST.MF"/>
+	</target>
+	<target depends="clean" name="cleanall"/>
+	<target depends="build-subprojects,build-project" name="build"/>
+	<target name="build-subprojects"/>
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
+			<src path="${src}"/>
+			<classpath refid="PictureTravelSuite.classpath"/>
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+	<!--target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+		<antcall target="build"/>
+	</target-->
+	<target name="${MainName}">
+		<java classname="${MainName}" failonerror="true" fork="yes">
+			<classpath refid="PictureTravelSuite.classpath"/>
+		</java>
+	</target>
+	<target name="${MainClass}">
+		<java classname="org.mdcomparetti.${MainClass}" failonerror="true" fork="yes">
+			<classpath refid="PictureTravelSuite.classpath"/>
+		</java>
+	</target>
+	<target name="dist" depends="build" description="generate the distribution">
+		<buildnumber/>
+		<manifest file="MANIFEST.MF">
+			<attribute name="Main-Class" value="org.mdcomparetti.${MainClass}"/>
+			<!--attribute name="Class-Path" value="${distv}/${MainName}-${version}.${build.number}.jar"/-->
+			<attribute name="Class-Path" value="${dist}"/>
+		</manifest>
+		<jar jarfile="${dist}/${MainName}-${version}.${build.number}.jar" basedir="${build}"  manifest="MANIFEST.MF"/>
+	</target>
+</project>
