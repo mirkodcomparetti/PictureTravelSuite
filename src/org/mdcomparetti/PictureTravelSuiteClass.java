@@ -90,58 +90,58 @@ public class PictureTravelSuiteClass extends JPanel
 	 */
 	private final JFileChooser fileChooser = new JFileChooser();
 
-	private JPanel controlsPanel;
-	private JTextField photographerText;
-	private JButton startBtn;
-	private JButton cancelBtn;
-	private JButton saveBtn;
+	private JPanel picture_controlsPanel;
+	private JTextField picture_photographerText;
+	private JButton picture_startBtn;
+	private JButton picture_cancelBtn;
 
-	private JPanel foldersPanel;
-	private File folderInput;
-	private JButton selectInputFolderBtn;
-	private JTextField folderInputText;
-	private File folderOutput;
+	private JPanel picture_foldersPanel;
+	private File picture_folderInput;
+	private JButton picture_selectInputFolderBtn;
+	private JTextField picture_folderInputText;
+	private File picture_folderOutput;
 	private JButton selectOutputFolderBtn;
-	private JTextField folderOutputText;
+	private JTextField picture_folderOutputText;
 
 	Map<String, File> cmdExecutables;
 
-	private JPanel commandsPanel;
-	private JPanel watermarkPanel;
-	private JCheckBox watermarkChckbx;
-	private JComboBox<Float> watermarkSize;
-	private JComboBox<String> watermarkPosition;
-	private JComboBox<String> watermarkFont;
-	private List<String> watermarkFontArray;
+	private JPanel picture_commandsPanel;
+	private JPanel picture_watermarkPanel;
+	private JCheckBox picture_watermarkChckbx;
+	private JComboBox<Float> picture_watermarkSize;
+	private JComboBox<String> picture_watermarkPosition;
+	private JComboBox<String> picture_watermarkFont;
+	private List<String> picture_watermarkFontArray;
 
-	private JPanel resizePanel;
-	private JCheckBox resizeChckbx;
-	private DefaultComboBoxModel<String> resizeValueModel;
-	private JComboBox<String> resizeValue;
-	private JComboBox<String> resizeEdge;
-	private JCheckBox resizeFullHDChckbx;
-	private JCheckBox resizeUltraHDChckbx;
+	private JPanel picture_resizePanel;
+	private JCheckBox picture_resizeChckbx;
+	private DefaultComboBoxModel<String> picture_resizeValueModel;
+	private JComboBox<String> picture_resizeValue;
+	private JComboBox<String> picture_resizeEdge;
+	private JCheckBox picture_resizeFullHDChckbx;
+	private JCheckBox picture_resizeUltraHDChckbx;
 
-	private JPanel framePanel;
-	private JCheckBox frameChckbx;
-	private JComboBox<String> frameColor;
-	private JComboBox<String> frameType;
-	private JComboBox<Float> frameSize;
-	private JComboBox<Float> frameThickness;
+	private JPanel picture_framePanel;
+	private JCheckBox picture_frameChckbx;
+	private JComboBox<String> picture_frameColor;
+	private JComboBox<String> picture_frameType;
+	private JComboBox<Float> picture_frameSize;
+	private JComboBox<Float> picture_frameThickness;
 
-	private JPanel colorProfilePanel;
-	private JCheckBox colorProfileChckbx;
-	private JComboBox<String> colorProfileFile;
-	private JComboBox<String> colorProfileIntent;
-	private List<String> colorProfileFileArray;
+	private JPanel picture_colorProfilePanel;
+	private JCheckBox picture_colorProfileChckbx;
+	private JComboBox<String> picture_colorProfileFile;
+	private JComboBox<String> picture_colorProfileIntent;
+	private List<String> picture_colorProfileFileArray;
 
-	private JPanel miscPanel;
-	private JCheckBox copyrightChckbx;
-	private JCheckBox commentChckbx;
-	private JCheckBox cleanExifChckbx;
+	private JPanel picture_miscPanel;
+	private JCheckBox picture_copyrightChckbx;
+	private JCheckBox picture_commentChckbx;
+	private JCheckBox picture_cleanExifChckbx;
 
 	private JPanel progressPanel;
 	private JButton exitBtn;
+	private JButton saveBtn;
 	private JProgressBar progressBarProcess;
 	
 	private JPanel bottomPanel;
@@ -213,22 +213,26 @@ public class PictureTravelSuiteClass extends JPanel
 			addToLog("ERROR: ImageMagick not found", Color.RED);
 			OnlyExit();
 		}
+		if (!cmdExecutables.containsKey("gpsbabel")) {
+			addToLog("ERROR: GPSbabel not found", Color.RED);
+			OnlyExit();
+		}
 	}
 
 	private void OnlyExit() {
 		exitBtn.setEnabled(true);
-		startBtn.setEnabled(false);
-		cancelBtn.setEnabled(false);
-		selectInputFolderBtn.setEnabled(false);
+		picture_startBtn.setEnabled(false);
+		picture_cancelBtn.setEnabled(false);
+		picture_selectInputFolderBtn.setEnabled(false);
 		selectOutputFolderBtn.setEnabled(false);
 		saveBtn.setEnabled(false);
-		watermarkChckbx.setEnabled(false);
-		resizeChckbx.setEnabled(false);
-		frameChckbx.setEnabled(false);
-		colorProfileChckbx.setEnabled(false);
-		copyrightChckbx.setEnabled(false);
-		commentChckbx.setEnabled(false);
-		cleanExifChckbx.setEnabled(false);
+		picture_watermarkChckbx.setEnabled(false);
+		picture_resizeChckbx.setEnabled(false);
+		picture_frameChckbx.setEnabled(false);
+		picture_colorProfileChckbx.setEnabled(false);
+		picture_copyrightChckbx.setEnabled(false);
+		picture_commentChckbx.setEnabled(false);
+		picture_cleanExifChckbx.setEnabled(false);
 
 		WatermarkDataEnable(false);
 		ResizeDataEnable(false);
@@ -247,8 +251,8 @@ public class PictureTravelSuiteClass extends JPanel
 		configProps = new Properties(configPropsDefault);
 		LoadConfiguration();
 
-		folderInput = null;
-		folderOutput = null;
+		picture_folderInput = null;
+		picture_folderOutput = null;
 		isRunning = false;
 
 		mainFrame = new JFrame();
@@ -277,216 +281,207 @@ public class PictureTravelSuiteClass extends JPanel
 		fileChooser.setCurrentDirectory(new java.io.File("."));
 		fileChooser.setDialogTitle("Select files and folders");
 
-		foldersPanel = new JPanel();
-		foldersPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		foldersPanel.setBounds((int) singleSpacerDimension.getWidth(),
+		picture_foldersPanel = new JPanel();
+		picture_foldersPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		picture_foldersPanel.setBounds((int) singleSpacerDimension.getWidth(),
 				(int) singleSpacerDimension.getHeight(),
 				(int) (5 * (singleObjectDimension.getWidth()
 						+ singleSpacerDimension.getWidth())
 						- singleSpacerDimension.getWidth()),
 				(int) (2 * singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight()));
-		mainFrame.getContentPane().add(foldersPanel);
-		foldersPanel.setLayout(null);
+		mainFrame.getContentPane().add(picture_foldersPanel);
+		picture_foldersPanel.setLayout(null);
 
-		folderInputText = new JTextField();
-		folderInputText.setLocation(0, 0);
-		folderInputText.setToolTipText("Show the selected source folder");
-		folderInputText.setColumns(26);
-		folderInputText.setEditable(false);
-		folderInputText.setText("Source folder not selected");
+		picture_folderInputText = new JTextField();
+		picture_folderInputText.setLocation(0, 0);
+		picture_folderInputText.setToolTipText("Show the selected source folder");
+		picture_folderInputText.setColumns(26);
+		picture_folderInputText.setEditable(false);
+		picture_folderInputText.setText("Source folder not selected");
 
-		selectInputFolderBtn = new JButton("Select");
-		selectInputFolderBtn.setActionCommand("folder");
-		selectInputFolderBtn.addActionListener(this);
-		selectInputFolderBtn
-				.setLocation((int) (foldersPanel.getSize().getWidth()
+		picture_selectInputFolderBtn = new JButton("Select");
+		picture_selectInputFolderBtn.setActionCommand("folder");
+		picture_selectInputFolderBtn.addActionListener(this);
+		picture_selectInputFolderBtn
+				.setLocation((int) (picture_foldersPanel.getSize().getWidth()
 						- singleObjectDimension.getWidth()), 0);
 
-		folderOutputText = new JTextField();
-		folderOutputText.setLocation(0, (int) (singleObjectDimension.getHeight()
+		picture_folderOutputText = new JTextField();
+		picture_folderOutputText.setLocation(0, (int) (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight()));
-		folderOutputText.setToolTipText("Show the selected target folder");
-		folderOutputText.setText("Target folder not selected, using source folder");
-		folderOutputText.setEditable(false);
-		folderOutputText.setColumns(26);
+		picture_folderOutputText.setToolTipText("Show the selected target folder");
+		picture_folderOutputText.setText("Target folder not selected, using source folder");
+		picture_folderOutputText.setEditable(false);
+		picture_folderOutputText.setColumns(26);
 
-		selectOutputFolderBtn = new JButton("Scegli");
+		selectOutputFolderBtn = new JButton("Select");
 		selectOutputFolderBtn.setActionCommand("folder");
 		selectOutputFolderBtn.addActionListener(this);
 		selectOutputFolderBtn.setLocation(
-				(int) (foldersPanel.getSize().getWidth()
+				(int) (picture_foldersPanel.getSize().getWidth()
 						- singleObjectDimension.getWidth()),
 				(int) (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight()));
 		selectOutputFolderBtn.setEnabled(false);
 
-		folderInputText.setSize(
+		picture_folderInputText.setSize(
 				(int) (4 * singleObjectDimension.getWidth()
 						+ 3 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight());
-		folderInputText.setMaximumSize(new Dimension(
+		picture_folderInputText.setMaximumSize(new Dimension(
 				(int) (4 * singleObjectDimension.getWidth()
 						+ 3 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight()));
-		selectInputFolderBtn.setSize(singleObjectDimension);
-		selectInputFolderBtn.setMaximumSize(singleObjectDimension);
-		folderOutputText.setSize(
+		picture_selectInputFolderBtn.setSize(singleObjectDimension);
+		picture_selectInputFolderBtn.setMaximumSize(singleObjectDimension);
+		picture_folderOutputText.setSize(
 				(int) (4 * singleObjectDimension.getWidth()
 						+ 3 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight());
-		folderOutputText.setMaximumSize(new Dimension(
+		picture_folderOutputText.setMaximumSize(new Dimension(
 				(int) (4 * singleObjectDimension.getWidth()
 						+ 3 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight()));
 		selectOutputFolderBtn.setSize(singleObjectDimension);
 		selectOutputFolderBtn.setMaximumSize(singleObjectDimension);
 
-		foldersPanel.add(folderInputText);
-		foldersPanel.add(selectInputFolderBtn);
-		foldersPanel.add(folderOutputText);
-		foldersPanel.add(selectOutputFolderBtn);
+		picture_foldersPanel.add(picture_folderInputText);
+		picture_foldersPanel.add(picture_selectInputFolderBtn);
+		picture_foldersPanel.add(picture_folderOutputText);
+		picture_foldersPanel.add(selectOutputFolderBtn);
 
-		controlsPanel = new JPanel();
-		controlsPanel.setBounds((int) (foldersPanel.getLocation().x),
-				(int) (foldersPanel.getLocation().y
-						+ foldersPanel.getSize().getHeight()
+		picture_controlsPanel = new JPanel();
+		picture_controlsPanel.setBounds((int) (picture_foldersPanel.getLocation().x),
+				(int) (picture_foldersPanel.getLocation().y
+						+ picture_foldersPanel.getSize().getHeight()
 						+ singleSpacerDimension.getHeight()),
 				(int) (5 * (singleObjectDimension.getWidth()
 						+ singleSpacerDimension.getWidth())
 						- singleSpacerDimension.getWidth()),
 				(int) (singleObjectDimension.getHeight()));
-		mainFrame.getContentPane().add(controlsPanel);
-		controlsPanel.setLayout(null);
+		mainFrame.getContentPane().add(picture_controlsPanel);
+		picture_controlsPanel.setLayout(null);
 
-		photographerText = new JTextField();
-		photographerText.setColumns(20);
+		picture_photographerText = new JTextField();
+		picture_photographerText.setColumns(20);
 
-		startBtn = new JButton("Start");
-		startBtn.setActionCommand("start");
-		startBtn.addActionListener(this);
-		startBtn.setEnabled(false);
+		picture_startBtn = new JButton("Start");
+		picture_startBtn.setActionCommand("start");
+		picture_startBtn.addActionListener(this);
+		picture_startBtn.setEnabled(false);
 
-		cancelBtn = new JButton("Stop");
-		cancelBtn.setActionCommand("stop");
-		cancelBtn.addActionListener(this);
-		cancelBtn.setEnabled(false);
+		picture_cancelBtn = new JButton("Stop");
+		picture_cancelBtn.setActionCommand("stop");
+		picture_cancelBtn.addActionListener(this);
+		picture_cancelBtn.setEnabled(false);
 
-		saveBtn = new JButton("Save");
-		saveBtn.setActionCommand("save");
-		saveBtn.addActionListener(this);
-
-		photographerText.setSize(
-				(int) (2 * singleObjectDimension.getWidth()
-						+ singleSpacerDimension.getWidth()),
+		picture_photographerText.setSize(
+				(int) (3 * singleObjectDimension.getWidth()
+						+ 2 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight());
-		photographerText.setMaximumSize(new Dimension(
-				(int) (2 * singleObjectDimension.getWidth()
-						+ singleSpacerDimension.getWidth()),
+		picture_photographerText.setMaximumSize(new Dimension(
+				(int) (3 * singleObjectDimension.getWidth()
+						+ 2 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight()));
-		photographerText.setLocation(0, 0);
-		startBtn.setSize(singleObjectDimension);
-		startBtn.setMaximumSize(singleObjectDimension);
-		startBtn.setLocation((int) (2 * (singleObjectDimension.getWidth()
+		picture_photographerText.setLocation(0, 0);
+		picture_startBtn.setSize(singleObjectDimension);
+		picture_startBtn.setMaximumSize(singleObjectDimension);
+		picture_startBtn.setLocation((int) (3 * (singleObjectDimension.getWidth()
 				+ singleSpacerDimension.getWidth())), 0);
-		cancelBtn.setSize(singleObjectDimension);
-		cancelBtn.setMaximumSize(singleObjectDimension);
-		cancelBtn.setLocation((int) (3 * (singleObjectDimension.getWidth()
+		picture_cancelBtn.setSize(singleObjectDimension);
+		picture_cancelBtn.setMaximumSize(singleObjectDimension);
+		picture_cancelBtn.setLocation((int) (4 * (singleObjectDimension.getWidth()
 				+ singleSpacerDimension.getWidth())), 0);
-		saveBtn.setSize(singleObjectDimension);
-		saveBtn.setMaximumSize(singleObjectDimension);
-		saveBtn.setLocation((int) (4 * (singleObjectDimension.getWidth()
-				+ singleSpacerDimension.getWidth())), 0);
-		controlsPanel.add(photographerText);
-		controlsPanel.add(startBtn);
-		controlsPanel.add(cancelBtn);
-		controlsPanel.add(saveBtn);
+		picture_controlsPanel.add(picture_photographerText);
+		picture_controlsPanel.add(picture_startBtn);
+		picture_controlsPanel.add(picture_cancelBtn);
 
-		commandsPanel = new JPanel();
-		commandsPanel.setBounds((int) (controlsPanel.getLocation().x),
-				(int) (controlsPanel.getLocation().y
-						+ controlsPanel.getSize().getHeight()
+		picture_commandsPanel = new JPanel();
+		picture_commandsPanel.setBounds((int) (picture_controlsPanel.getLocation().x),
+				(int) (picture_controlsPanel.getLocation().y
+						+ picture_controlsPanel.getSize().getHeight()
 						+ singleSpacerDimension.getHeight()),
 				(int) (5 * singleObjectDimension.getWidth()
 						+ 4 * singleSpacerDimension.getWidth()),
 				(int) (5 * singleObjectDimension.getHeight()
 						+ 4 * singleSpacerDimension.getHeight()));
-		mainFrame.getContentPane().add(commandsPanel);
-		commandsPanel.setLayout(null);
+		mainFrame.getContentPane().add(picture_commandsPanel);
+		picture_commandsPanel.setLayout(null);
 
-		miscPanel = new JPanel();
-		miscPanel.setLocation(0, 0);
-		miscPanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
+		picture_miscPanel = new JPanel();
+		picture_miscPanel.setLocation(0, 0);
+		picture_miscPanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
 				(int) (3 * (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight())
 						- singleSpacerDimension.getHeight())));
-		miscPanel.setMaximumSize(
+		picture_miscPanel.setMaximumSize(
 				new Dimension((int) singleObjectDimension.getWidth(),
 						(int) (3 * (singleObjectDimension.getHeight()
 								+ singleSpacerDimension.getHeight())
 						- singleSpacerDimension.getHeight())));
-		miscPanel.setLayout(null);
-		// miscPanel.setBorder(new TitledBorder(null, "Vari",
+		picture_miscPanel.setLayout(null);
+		// picture_miscPanel.setBorder(new TitledBorder(null, "Vari",
 		// TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
-		commentChckbx = new JCheckBox("Info");
-		commentChckbx.setToolTipText("Adds info about the file in the EXIF comments");
+		picture_commentChckbx = new JCheckBox("Info");
+		picture_commentChckbx.setToolTipText("Adds info about the file in the EXIF comments");
 
-		copyrightChckbx = new JCheckBox("Copyright");
-		copyrightChckbx.setToolTipText("Adds copyright info on the file");
+		picture_copyrightChckbx = new JCheckBox("Copyright");
+		picture_copyrightChckbx.setToolTipText("Adds copyright info on the file");
 
-		cleanExifChckbx = new JCheckBox("No EXIF");
-		cleanExifChckbx.setToolTipText("Cleans the EXIF information: photoshop, software");
+		picture_cleanExifChckbx = new JCheckBox("No EXIF");
+		picture_cleanExifChckbx.setToolTipText("Cleans the EXIF information: photoshop, software");
 
-		copyrightChckbx.setLocation(0, 0);
-		copyrightChckbx.setSize(singleObjectDimension);
-		copyrightChckbx.setMaximumSize(singleObjectDimension);
-		commentChckbx.setLocation(0, (int) (singleObjectDimension.getHeight()
+		picture_copyrightChckbx.setLocation(0, 0);
+		picture_copyrightChckbx.setSize(singleObjectDimension);
+		picture_copyrightChckbx.setMaximumSize(singleObjectDimension);
+		picture_commentChckbx.setLocation(0, (int) (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight()));
-		commentChckbx.setSize(singleObjectDimension);
-		commentChckbx.setMaximumSize(singleObjectDimension);
-		cleanExifChckbx.setLocation(0,
+		picture_commentChckbx.setSize(singleObjectDimension);
+		picture_commentChckbx.setMaximumSize(singleObjectDimension);
+		picture_cleanExifChckbx.setLocation(0,
 				(int) (2 * (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight())));
-		cleanExifChckbx.setSize(singleObjectDimension);
-		cleanExifChckbx.setMaximumSize(singleObjectDimension);
-		miscPanel.add(copyrightChckbx);
-		miscPanel.add(commentChckbx);
-		miscPanel.add(cleanExifChckbx);
+		picture_cleanExifChckbx.setSize(singleObjectDimension);
+		picture_cleanExifChckbx.setMaximumSize(singleObjectDimension);
+		picture_miscPanel.add(picture_copyrightChckbx);
+		picture_miscPanel.add(picture_commentChckbx);
+		picture_miscPanel.add(picture_cleanExifChckbx);
 
-		colorProfilePanel = new JPanel();
-		colorProfilePanel.setLocation((int) (singleObjectDimension.getWidth()
+		picture_colorProfilePanel = new JPanel();
+		picture_colorProfilePanel.setLocation((int) (singleObjectDimension.getWidth()
 				+ singleSpacerDimension.getWidth()), 0);
-		colorProfilePanel
+		picture_colorProfilePanel
 				.setSize(new Dimension((int) singleObjectDimension.getWidth(),
 						(int) (3 * singleObjectDimension.getHeight()
 								+ 2 * singleSpacerDimension.getHeight())));
-		colorProfilePanel.setMaximumSize(
+		picture_colorProfilePanel.setMaximumSize(
 				new Dimension((int) singleObjectDimension.getWidth(),
 						(int) (3 * singleObjectDimension.getHeight()
 								+ 2 * singleSpacerDimension.getHeight())));
-		colorProfilePanel.setLayout(null);
+		picture_colorProfilePanel.setLayout(null);
 
-		colorProfileChckbx = new JCheckBox("Profile");
-		colorProfileChckbx.setToolTipText("Changes the color profile for the pictures");
-		colorProfileChckbx.setActionCommand("colorProfile");
-		colorProfileChckbx.addActionListener(this);
+		picture_colorProfileChckbx = new JCheckBox("Profile");
+		picture_colorProfileChckbx.setToolTipText("Changes the color profile for the pictures");
+		picture_colorProfileChckbx.setActionCommand("colorProfile");
+		picture_colorProfileChckbx.addActionListener(this);
 
-		colorProfileFile = new JComboBox<String>();
-		colorProfileFileArray = new ArrayList<String>();
-		colorProfileFileArray.add(
+		picture_colorProfileFile = new JComboBox<String>();
+		picture_colorProfileFileArray = new ArrayList<String>();
+		picture_colorProfileFileArray.add(
 				"/org/mdcomparetti/resources/colorprofiles/srgb.icc");
-		colorProfileFileArray.add(
+		picture_colorProfileFileArray.add(
 				"/org/mdcomparetti/resources/colorprofiles/AdobeRGB1998.icc");
-		colorProfileFileArray.add(
+		picture_colorProfileFileArray.add(
 				"/org/mdcomparetti/resources/colorprofiles/MelissaRGB.icc");
-		colorProfileFileArray.add(
+		picture_colorProfileFileArray.add(
 				"/org/mdcomparetti/resources/colorprofiles/ProPhoto.icc");
-		colorProfileFileArray.add(
+		picture_colorProfileFileArray.add(
 				"/org/mdcomparetti/resources/colorprofiles/WideGamut.icc");
-		Collections.sort(colorProfileFileArray);
-		for (int iter = 0; iter < colorProfileFileArray.size(); iter++) {
-			String tmp = colorProfileFileArray.get(iter);
+		Collections.sort(picture_colorProfileFileArray);
+		for (int iter = 0; iter < picture_colorProfileFileArray.size(); iter++) {
+			String tmp = picture_colorProfileFileArray.get(iter);
 			tmp = tmp.substring(0, (tmp.lastIndexOf(".") != -1)
 					? tmp.lastIndexOf(".")
 					: tmp.length());
@@ -496,180 +491,180 @@ public class PictureTravelSuiteClass extends JPanel
 			tmp = tmp.substring((tmp.lastIndexOf("\\") != -1)
 					? tmp.lastIndexOf("\\") + 1
 					: 0, tmp.length());
-			colorProfileFile.addItem(tmp);
+			picture_colorProfileFile.addItem(tmp);
 		}
-		colorProfileFile.setEnabled(false);
-		colorProfileIntent = new JComboBox<String>();
-		colorProfileIntent.addItem("Absolute");
-		colorProfileIntent.addItem("Perceptual");
-		colorProfileIntent.addItem("Relative");
-		colorProfileIntent.addItem("Saturation");
-		colorProfileIntent.setEnabled(false);
+		picture_colorProfileFile.setEnabled(false);
+		picture_colorProfileIntent = new JComboBox<String>();
+		picture_colorProfileIntent.addItem("Absolute");
+		picture_colorProfileIntent.addItem("Perceptual");
+		picture_colorProfileIntent.addItem("Relative");
+		picture_colorProfileIntent.addItem("Saturation");
+		picture_colorProfileIntent.setEnabled(false);
 
-		colorProfileChckbx.setSize(singleObjectDimension);
-		colorProfileFile.setSize(singleObjectDimension);
-		colorProfileIntent.setSize(singleObjectDimension);
-		colorProfileChckbx.setMaximumSize(singleObjectDimension);
-		colorProfileFile.setMaximumSize(singleObjectDimension);
-		colorProfileIntent.setMaximumSize(singleObjectDimension);
-		colorProfileChckbx.setLocation(0, 0);
-		colorProfileFile.setLocation(0, (int) (singleObjectDimension.getHeight()
+		picture_colorProfileChckbx.setSize(singleObjectDimension);
+		picture_colorProfileFile.setSize(singleObjectDimension);
+		picture_colorProfileIntent.setSize(singleObjectDimension);
+		picture_colorProfileChckbx.setMaximumSize(singleObjectDimension);
+		picture_colorProfileFile.setMaximumSize(singleObjectDimension);
+		picture_colorProfileIntent.setMaximumSize(singleObjectDimension);
+		picture_colorProfileChckbx.setLocation(0, 0);
+		picture_colorProfileFile.setLocation(0, (int) (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight()));
-		colorProfileIntent.setLocation(0, (int) (2 * (singleObjectDimension.getHeight()
+		picture_colorProfileIntent.setLocation(0, (int) (2 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
-		colorProfilePanel.add(colorProfileChckbx);
-		colorProfilePanel.add(colorProfileFile);
-		colorProfilePanel.add(colorProfileIntent);
+		picture_colorProfilePanel.add(picture_colorProfileChckbx);
+		picture_colorProfilePanel.add(picture_colorProfileFile);
+		picture_colorProfilePanel.add(picture_colorProfileIntent);
 
-		framePanel = new JPanel();
-		framePanel.setLocation((int) (2 * (singleObjectDimension.getWidth()
+		picture_framePanel = new JPanel();
+		picture_framePanel.setLocation((int) (2 * (singleObjectDimension.getWidth()
 				+ singleSpacerDimension.getWidth())), 0);
-		framePanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
+		picture_framePanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
 				(int) (5 * singleObjectDimension.getHeight()
 						+ 4 * singleSpacerDimension.getHeight())));
-		framePanel.setMaximumSize(
+		picture_framePanel.setMaximumSize(
 				new Dimension((int) singleObjectDimension.getWidth(),
 						(int) (5 * (singleObjectDimension.getHeight()
 								+ singleSpacerDimension.getHeight()))));
-		framePanel.setLayout(null);
+		picture_framePanel.setLayout(null);
 
-		frameChckbx = new JCheckBox("Frame");
-		frameChckbx.setToolTipText("Adds a frame to the pictures");
-		frameChckbx.setActionCommand("frame");
-		frameChckbx.addActionListener(this);
+		picture_frameChckbx = new JCheckBox("Frame");
+		picture_frameChckbx.setToolTipText("Adds a frame to the pictures");
+		picture_frameChckbx.setActionCommand("frame");
+		picture_frameChckbx.addActionListener(this);
 
-		frameColor = new JComboBox<String>();
-		frameColor.addItem("white");
-		frameColor.addItem("black");
-		frameColor.addItem("red");
-		frameColor.addItem("green");
-		frameColor.addItem("blue");
+		picture_frameColor = new JComboBox<String>();
+		picture_frameColor.addItem("white");
+		picture_frameColor.addItem("black");
+		picture_frameColor.addItem("red");
+		picture_frameColor.addItem("green");
+		picture_frameColor.addItem("blue");
 
-		frameType = new JComboBox<String>();
-		frameType.addItem("Plain");
-		frameType.addItem("Double");
-		frameType.addItem("Inner");
-		frameType.addItem("Rounded");
-		frameType.addItem("Outer");
-		frameType.addItem("Blur");
-		frameType.addItem("Italy");
+		picture_frameType = new JComboBox<String>();
+		picture_frameType.addItem("Plain");
+		picture_frameType.addItem("Double");
+		picture_frameType.addItem("Inner");
+		picture_frameType.addItem("Rounded");
+		picture_frameType.addItem("Outer");
+		picture_frameType.addItem("Blur");
+		picture_frameType.addItem("Italy");
 
-		frameSize = new JComboBox<Float>();
-		frameSize.addItem((float) 0.25);
-		frameSize.addItem((float) 0.50);
-		frameSize.addItem((float) 1.00);
-		frameSize.addItem((float) 1.25);
-		frameSize.addItem((float) 1.50);
-		frameSize.addItem((float) 1.75);
-		frameSize.addItem((float) 2.00);
-		frameSize.addItem((float) 2.25);
-		frameSize.addItem((float) 2.50);
-		frameSize.addItem((float) 2.75);
-		frameSize.addItem((float) 3.00);
-		frameSize.addItem((float) 3.25);
-		frameSize.addItem((float) 3.50);
-		frameSize.addItem((float) 3.75);
-		frameSize.addItem((float) 4.00);
-		frameSize.addItem((float) 4.25);
-		frameSize.addItem((float) 4.50);
-		frameSize.addItem((float) 4.75);
-		frameSize.addItem((float) 5.00);
+		picture_frameSize = new JComboBox<Float>();
+		picture_frameSize.addItem((float) 0.25);
+		picture_frameSize.addItem((float) 0.50);
+		picture_frameSize.addItem((float) 1.00);
+		picture_frameSize.addItem((float) 1.25);
+		picture_frameSize.addItem((float) 1.50);
+		picture_frameSize.addItem((float) 1.75);
+		picture_frameSize.addItem((float) 2.00);
+		picture_frameSize.addItem((float) 2.25);
+		picture_frameSize.addItem((float) 2.50);
+		picture_frameSize.addItem((float) 2.75);
+		picture_frameSize.addItem((float) 3.00);
+		picture_frameSize.addItem((float) 3.25);
+		picture_frameSize.addItem((float) 3.50);
+		picture_frameSize.addItem((float) 3.75);
+		picture_frameSize.addItem((float) 4.00);
+		picture_frameSize.addItem((float) 4.25);
+		picture_frameSize.addItem((float) 4.50);
+		picture_frameSize.addItem((float) 4.75);
+		picture_frameSize.addItem((float) 5.00);
 
-		frameThickness = new JComboBox<Float>();
-		frameThickness.addItem((float) 0.125);
-		frameThickness.addItem((float) 0.25);
-		frameThickness.addItem((float) 0.375);
-		frameThickness.addItem((float) 0.5);
-		frameThickness.addItem((float) 0.625);
-		frameThickness.addItem((float) 0.75);
-		frameThickness.addItem((float) 0.825);
-		frameThickness.addItem((float) 1.0);
-		frameThickness.addItem((float) 1.125);
-		frameThickness.addItem((float) 1.25);
-		frameThickness.addItem((float) 1.375);
-		frameThickness.addItem((float) 1.5);
-		frameThickness.addItem((float) 1.625);
-		frameThickness.addItem((float) 1.75);
-		frameThickness.addItem((float) 1.825);
-		frameThickness.addItem((float) 2.0);
+		picture_frameThickness = new JComboBox<Float>();
+		picture_frameThickness.addItem((float) 0.125);
+		picture_frameThickness.addItem((float) 0.25);
+		picture_frameThickness.addItem((float) 0.375);
+		picture_frameThickness.addItem((float) 0.5);
+		picture_frameThickness.addItem((float) 0.625);
+		picture_frameThickness.addItem((float) 0.75);
+		picture_frameThickness.addItem((float) 0.825);
+		picture_frameThickness.addItem((float) 1.0);
+		picture_frameThickness.addItem((float) 1.125);
+		picture_frameThickness.addItem((float) 1.25);
+		picture_frameThickness.addItem((float) 1.375);
+		picture_frameThickness.addItem((float) 1.5);
+		picture_frameThickness.addItem((float) 1.625);
+		picture_frameThickness.addItem((float) 1.75);
+		picture_frameThickness.addItem((float) 1.825);
+		picture_frameThickness.addItem((float) 2.0);
 
-		frameChckbx.setSize(singleObjectDimension);
-		frameChckbx.setMaximumSize(singleObjectDimension);
-		frameChckbx.setLocation(0, 0);
-		frameType.setSize(singleObjectDimension);
-		frameType.setMaximumSize(singleObjectDimension);
-		frameType.setLocation(0, (int) (1 * (singleObjectDimension.getHeight()
+		picture_frameChckbx.setSize(singleObjectDimension);
+		picture_frameChckbx.setMaximumSize(singleObjectDimension);
+		picture_frameChckbx.setLocation(0, 0);
+		picture_frameType.setSize(singleObjectDimension);
+		picture_frameType.setMaximumSize(singleObjectDimension);
+		picture_frameType.setLocation(0, (int) (1 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
 
-		frameColor.setSize(singleObjectDimension);
-		frameColor.setMaximumSize(singleObjectDimension);
-		frameColor.setLocation(0, (int) (2 * (singleObjectDimension.getHeight()
+		picture_frameColor.setSize(singleObjectDimension);
+		picture_frameColor.setMaximumSize(singleObjectDimension);
+		picture_frameColor.setLocation(0, (int) (2 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
-		frameSize.setSize(singleObjectDimension);
-		frameSize.setMaximumSize(singleObjectDimension);
-		frameSize.setLocation(0, (int) (3 * (singleObjectDimension.getHeight()
+		picture_frameSize.setSize(singleObjectDimension);
+		picture_frameSize.setMaximumSize(singleObjectDimension);
+		picture_frameSize.setLocation(0, (int) (3 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
-		frameThickness.setSize(singleObjectDimension);
-		frameThickness.setMaximumSize(singleObjectDimension);
-		frameThickness.setLocation(0,
+		picture_frameThickness.setSize(singleObjectDimension);
+		picture_frameThickness.setMaximumSize(singleObjectDimension);
+		picture_frameThickness.setLocation(0,
 				(int) (4 * (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight())));
-		framePanel.add(frameChckbx);
-		framePanel.add(frameColor);
-		framePanel.add(frameType);
-		framePanel.add(frameSize);
-		framePanel.add(frameThickness);
+		picture_framePanel.add(picture_frameChckbx);
+		picture_framePanel.add(picture_frameColor);
+		picture_framePanel.add(picture_frameType);
+		picture_framePanel.add(picture_frameSize);
+		picture_framePanel.add(picture_frameThickness);
 
-		watermarkPanel = new JPanel();
-		watermarkPanel.setLocation((int) (3 * (singleObjectDimension.getWidth()
+		picture_watermarkPanel = new JPanel();
+		picture_watermarkPanel.setLocation((int) (3 * (singleObjectDimension.getWidth()
 				+ singleSpacerDimension.getWidth())), 0);
-		watermarkPanel.setSize((int) singleObjectDimension.getWidth(),
+		picture_watermarkPanel.setSize((int) singleObjectDimension.getWidth(),
 				(int) (4 * singleObjectDimension.getHeight()
 						+ 3 * singleSpacerDimension.getHeight()));
-		watermarkPanel.setMaximumSize(
+		picture_watermarkPanel.setMaximumSize(
 				new Dimension((int) singleObjectDimension.getWidth(),
 						(int) (4 * (singleObjectDimension.getHeight()
 								+ singleSpacerDimension.getHeight()))));
-		watermarkPanel.setLayout(null);
+		picture_watermarkPanel.setLayout(null);
 
-		watermarkChckbx = new JCheckBox("Watermark");
-		watermarkChckbx.setToolTipText("Add watermark to the pictures");
-		watermarkChckbx.setActionCommand("watermark");
-		watermarkChckbx.addActionListener(this);
+		picture_watermarkChckbx = new JCheckBox("Watermark");
+		picture_watermarkChckbx.setToolTipText("Add watermark to the pictures");
+		picture_watermarkChckbx.setActionCommand("watermark");
+		picture_watermarkChckbx.addActionListener(this);
 
-		watermarkSize = new JComboBox<Float>();
-		watermarkSize.addItem((float) 0.5);
-		watermarkSize.addItem((float) 1);
-		watermarkSize.addItem((float) 1.5);
-		watermarkSize.addItem((float) 2);
-		watermarkSize.addItem((float) 2.5);
-		watermarkSize.addItem((float) 3);
-		watermarkSize.addItem((float) 3.5);
-		watermarkSize.addItem((float) 4);
-		watermarkSize.addItem((float) 4.5);
-		watermarkSize.addItem((float) 5);
+		picture_watermarkSize = new JComboBox<Float>();
+		picture_watermarkSize.addItem((float) 0.5);
+		picture_watermarkSize.addItem((float) 1);
+		picture_watermarkSize.addItem((float) 1.5);
+		picture_watermarkSize.addItem((float) 2);
+		picture_watermarkSize.addItem((float) 2.5);
+		picture_watermarkSize.addItem((float) 3);
+		picture_watermarkSize.addItem((float) 3.5);
+		picture_watermarkSize.addItem((float) 4);
+		picture_watermarkSize.addItem((float) 4.5);
+		picture_watermarkSize.addItem((float) 5);
 
-		watermarkPosition = new JComboBox<String>();
-		watermarkPosition.addItem("center");
-		watermarkPosition.addItem("southeast");
-		watermarkPosition.addItem("east");
-		watermarkPosition.addItem("northeast");
-		watermarkPosition.addItem("north");
-		watermarkPosition.addItem("northwest");
-		watermarkPosition.addItem("west");
-		watermarkPosition.addItem("southwest");
+		picture_watermarkPosition = new JComboBox<String>();
+		picture_watermarkPosition.addItem("center");
+		picture_watermarkPosition.addItem("southeast");
+		picture_watermarkPosition.addItem("east");
+		picture_watermarkPosition.addItem("northeast");
+		picture_watermarkPosition.addItem("north");
+		picture_watermarkPosition.addItem("northwest");
+		picture_watermarkPosition.addItem("west");
+		picture_watermarkPosition.addItem("southwest");
 
-		watermarkFont = new JComboBox<String>();
-		watermarkFontArray = new ArrayList<String>();
-		watermarkFontArray.add(
+		picture_watermarkFont = new JComboBox<String>();
+		picture_watermarkFontArray = new ArrayList<String>();
+		picture_watermarkFontArray.add(
 				"/org/mdcomparetti/resources/fonts/FFXMarquee.ttf");
-		watermarkFontArray.add(
+		picture_watermarkFontArray.add(
 				"/org/mdcomparetti/resources/fonts/WalkwayCondensed.ttf");
-		watermarkFontArray.add(
+		picture_watermarkFontArray.add(
 				"/org/mdcomparetti/resources/fonts/Existence-Light.otf");
-		Collections.sort(watermarkFontArray);
-		for (int iter = 0; iter < watermarkFontArray.size(); iter++) {
-			String tmp = watermarkFontArray.get(iter);
+		Collections.sort(picture_watermarkFontArray);
+		for (int iter = 0; iter < picture_watermarkFontArray.size(); iter++) {
+			String tmp = picture_watermarkFontArray.get(iter);
 			tmp = tmp.substring(0, (tmp.lastIndexOf(".") != -1)
 					? tmp.lastIndexOf(".")
 					: tmp.length());
@@ -679,121 +674,121 @@ public class PictureTravelSuiteClass extends JPanel
 			tmp = tmp.substring((tmp.lastIndexOf("\\") != -1)
 					? tmp.lastIndexOf("\\") + 1
 					: 0, tmp.length());
-			watermarkFont.addItem(tmp);
+			picture_watermarkFont.addItem(tmp);
 		}
-		watermarkFont.setEnabled(false);
+		picture_watermarkFont.setEnabled(false);
 
-		watermarkChckbx.setSize(singleObjectDimension);
-		watermarkChckbx.setMaximumSize(singleObjectDimension);
-		watermarkChckbx.setLocation(0, 0);
-		watermarkPosition.setSize(singleObjectDimension);
-		watermarkPosition.setMaximumSize(singleObjectDimension);
-		watermarkPosition.setLocation(0,
+		picture_watermarkChckbx.setSize(singleObjectDimension);
+		picture_watermarkChckbx.setMaximumSize(singleObjectDimension);
+		picture_watermarkChckbx.setLocation(0, 0);
+		picture_watermarkPosition.setSize(singleObjectDimension);
+		picture_watermarkPosition.setMaximumSize(singleObjectDimension);
+		picture_watermarkPosition.setLocation(0,
 				(int) (1 * (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight())));
-		watermarkSize.setSize(singleObjectDimension);
-		watermarkSize.setMaximumSize(singleObjectDimension);
-		watermarkSize.setLocation(0,
+		picture_watermarkSize.setSize(singleObjectDimension);
+		picture_watermarkSize.setMaximumSize(singleObjectDimension);
+		picture_watermarkSize.setLocation(0,
 				(int) (2 * (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight())));
-		watermarkFont.setSize(singleObjectDimension);
-		watermarkFont.setMaximumSize(singleObjectDimension);
-		watermarkFont.setLocation(0,
+		picture_watermarkFont.setSize(singleObjectDimension);
+		picture_watermarkFont.setMaximumSize(singleObjectDimension);
+		picture_watermarkFont.setLocation(0,
 				(int) (3 * (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight())));
-		watermarkPanel.add(watermarkChckbx);
-		watermarkPanel.add(watermarkSize);
-		watermarkPanel.add(watermarkPosition);
-		watermarkPanel.add(watermarkFont);
+		picture_watermarkPanel.add(picture_watermarkChckbx);
+		picture_watermarkPanel.add(picture_watermarkSize);
+		picture_watermarkPanel.add(picture_watermarkPosition);
+		picture_watermarkPanel.add(picture_watermarkFont);
 
-		resizePanel = new JPanel();
-		resizePanel.setLocation((int) (4 * (singleObjectDimension.getWidth()
+		picture_resizePanel = new JPanel();
+		picture_resizePanel.setLocation((int) (4 * (singleObjectDimension.getWidth()
 				+ singleSpacerDimension.getWidth())), 0);
-		resizePanel
+		picture_resizePanel
 				.setSize(new Dimension((int) singleObjectDimension.getWidth(),
 						(int) (5 * singleObjectDimension.getHeight()
 								+ 4 * singleSpacerDimension.getHeight())));
-		resizePanel.setMaximumSize(
+		picture_resizePanel.setMaximumSize(
 				new Dimension((int) singleObjectDimension.getWidth(),
 						(int) (5 * (singleObjectDimension.getHeight()
 								+ singleSpacerDimension.getHeight()))));
-		resizePanel.setLayout(null);
+		picture_resizePanel.setLayout(null);
 
-		resizeChckbx = new JCheckBox("Resize");
-		resizeChckbx.setToolTipText("Resize pictures");
-		resizeChckbx.setActionCommand("resize");
-		resizeChckbx.addActionListener(this);
+		picture_resizeChckbx = new JCheckBox("Resize");
+		picture_resizeChckbx.setToolTipText("Resize pictures");
+		picture_resizeChckbx.setActionCommand("resize");
+		picture_resizeChckbx.addActionListener(this);
 		
-		resizeValueModel = new DefaultComboBoxModel<String>(
+		picture_resizeValueModel = new DefaultComboBoxModel<String>(
 				new String[]{"800", "1000", "1200", "2000"});
-		resizeValue = new JComboBox<String>(resizeValueModel);
-		resizeValue.setEditable(true);
-		resizeValue.addActionListener(new ActionListener() {
+		picture_resizeValue = new JComboBox<String>(picture_resizeValueModel);
+		picture_resizeValue.setEditable(true);
+		picture_resizeValue.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if ("comboBoxEdited".equals(e.getActionCommand())) {
-					Object newValue = resizeValueModel.getSelectedItem();
-					resizeValueModel.addElement((String) newValue);
-					resizeValue.setSelectedItem(newValue);
+					Object newValue = picture_resizeValueModel.getSelectedItem();
+					picture_resizeValueModel.addElement((String) newValue);
+					picture_resizeValue.setSelectedItem(newValue);
 				}
 			}
 		});
 
-		resizeEdge = new JComboBox<String>();
-		resizeEdge.addItem("Lungo");
-		resizeEdge.addItem("Corto");
+		picture_resizeEdge = new JComboBox<String>();
+		picture_resizeEdge.addItem("Long");
+		picture_resizeEdge.addItem("Short");
 
-		resizeFullHDChckbx = new JCheckBox("Full HD");
-		resizeFullHDChckbx.setToolTipText("FullHD size");
-		resizeFullHDChckbx.setActionCommand("fullhd");
-		resizeFullHDChckbx.addActionListener(this);
-		resizeUltraHDChckbx = new JCheckBox("Ultra HD");
-		resizeUltraHDChckbx.setToolTipText("Ultra HD 4k size");
-		resizeUltraHDChckbx.setActionCommand("ultrahd");
-		resizeUltraHDChckbx.addActionListener(this);
+		picture_resizeFullHDChckbx = new JCheckBox("Full HD");
+		picture_resizeFullHDChckbx.setToolTipText("FullHD size");
+		picture_resizeFullHDChckbx.setActionCommand("fullhd");
+		picture_resizeFullHDChckbx.addActionListener(this);
+		picture_resizeUltraHDChckbx = new JCheckBox("Ultra HD");
+		picture_resizeUltraHDChckbx.setToolTipText("Ultra HD 4k size");
+		picture_resizeUltraHDChckbx.setActionCommand("ultrahd");
+		picture_resizeUltraHDChckbx.addActionListener(this);
 		
-		resizeChckbx.setSize(singleObjectDimension);
-		resizeChckbx.setMaximumSize(singleObjectDimension);
-		resizeChckbx.setLocation(0, 0);
-		resizeValue.setSize(singleObjectDimension);
-		resizeValue.setMaximumSize(singleObjectDimension);
-		resizeValue.setLocation(0, (int) (1 * (singleObjectDimension.getHeight()
+		picture_resizeChckbx.setSize(singleObjectDimension);
+		picture_resizeChckbx.setMaximumSize(singleObjectDimension);
+		picture_resizeChckbx.setLocation(0, 0);
+		picture_resizeValue.setSize(singleObjectDimension);
+		picture_resizeValue.setMaximumSize(singleObjectDimension);
+		picture_resizeValue.setLocation(0, (int) (1 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
-		resizeEdge.setSize(singleObjectDimension);
-		resizeEdge.setMaximumSize(singleObjectDimension);
-		resizeEdge.setLocation(0, (int) (2 * (singleObjectDimension.getHeight()
+		picture_resizeEdge.setSize(singleObjectDimension);
+		picture_resizeEdge.setMaximumSize(singleObjectDimension);
+		picture_resizeEdge.setLocation(0, (int) (2 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
-		resizeFullHDChckbx.setSize(singleObjectDimension);
-		resizeFullHDChckbx.setMaximumSize(singleObjectDimension);
-		resizeFullHDChckbx.setLocation(0, (int) (3 * (singleObjectDimension.getHeight()
+		picture_resizeFullHDChckbx.setSize(singleObjectDimension);
+		picture_resizeFullHDChckbx.setMaximumSize(singleObjectDimension);
+		picture_resizeFullHDChckbx.setLocation(0, (int) (3 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
-		resizeUltraHDChckbx.setSize(singleObjectDimension);
-		resizeUltraHDChckbx.setMaximumSize(singleObjectDimension);
-		resizeUltraHDChckbx.setLocation(0, (int) (4 * (singleObjectDimension.getHeight()
+		picture_resizeUltraHDChckbx.setSize(singleObjectDimension);
+		picture_resizeUltraHDChckbx.setMaximumSize(singleObjectDimension);
+		picture_resizeUltraHDChckbx.setLocation(0, (int) (4 * (singleObjectDimension.getHeight()
 				+ singleSpacerDimension.getHeight())));
-		resizePanel.add(resizeChckbx);
-		resizePanel.add(resizeValue);
-		resizePanel.add(resizeEdge);
-		resizePanel.add(resizeFullHDChckbx);
-		resizePanel.add(resizeUltraHDChckbx);
+		picture_resizePanel.add(picture_resizeChckbx);
+		picture_resizePanel.add(picture_resizeValue);
+		picture_resizePanel.add(picture_resizeEdge);
+		picture_resizePanel.add(picture_resizeFullHDChckbx);
+		picture_resizePanel.add(picture_resizeUltraHDChckbx);
 
-		commandsPanel.add(miscPanel);
-		commandsPanel.add(colorProfilePanel);
-		commandsPanel.add(framePanel);
-		commandsPanel.add(watermarkPanel);
-		commandsPanel.add(resizePanel);
+		picture_commandsPanel.add(picture_miscPanel);
+		picture_commandsPanel.add(picture_colorProfilePanel);
+		picture_commandsPanel.add(picture_framePanel);
+		picture_commandsPanel.add(picture_watermarkPanel);
+		picture_commandsPanel.add(picture_resizePanel);
 
 		logText = new MyJTextArea();
 		// logText.setColumns(5);
 		logText.setMargin(new Insets(5, 5, 5, 5));
 		logText.setLocation(0, 0);
-		logText.setSize(new Dimension((int) commandsPanel.getSize().getWidth(),
+		logText.setSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
 				(int) (15 * singleObjectDimension.getHeight())));
 		logText.setPreferredSize(
-				new Dimension((int) commandsPanel.getSize().getWidth(),
+				new Dimension((int) picture_commandsPanel.getSize().getWidth(),
 						(int) (15 * singleObjectDimension.getHeight())));
 		logText.setMaximumSize(
-				new Dimension((int) commandsPanel.getSize().getWidth(),
+				new Dimension((int) picture_commandsPanel.getSize().getWidth(),
 						(int) (15 * singleObjectDimension.getHeight())));
 		logText.setEditable(false);
 		//logText.setLineWrap(true);
@@ -801,53 +796,64 @@ public class PictureTravelSuiteClass extends JPanel
 		logText.setTopInsertion(false);
 
 		progressPanel = new JPanel();
-		progressPanel.setBounds((int) (commandsPanel.getLocation().x),
-				(int) (commandsPanel.getLocation().y
-						+ commandsPanel.getSize().getHeight()
+		progressPanel.setBounds((int) (picture_commandsPanel.getLocation().x),
+				(int) (picture_commandsPanel.getLocation().y
+						+ picture_commandsPanel.getSize().getHeight()
 						+ singleSpacerDimension.getHeight()),
-				(int) commandsPanel.getSize().getWidth(),
+				(int) picture_commandsPanel.getSize().getWidth(),
 				(int) (singleObjectDimension.getHeight()));
 		progressPanel.setMaximumSize(
-				new Dimension((int) commandsPanel.getSize().getWidth(),
+				new Dimension((int) picture_commandsPanel.getSize().getWidth(),
 						(int) (singleObjectDimension.getHeight())));
 		mainFrame.getContentPane().add(progressPanel);
 		progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.X_AXIS));
 
 		progressBarProcess = new JProgressBar(0, 100);
-		progressBarProcess.setToolTipText("Progresso");
+		progressBarProcess.setToolTipText("Progress");
 		progressBarProcess.setValue(progressBarProcess.getMinimum());
 		progressBarProcess.setStringPainted(true);
 
-		exitBtn = new JButton("Esci");
-		exitBtn.setToolTipText("Chiudi il programma");
+		saveBtn = new JButton("Save");
+		saveBtn.setActionCommand("save");
+		saveBtn.addActionListener(this);
+
+		exitBtn = new JButton("Exit");
+		exitBtn.setToolTipText("Shut down the program");
 		exitBtn.setActionCommand("exit");
 		exitBtn.addActionListener(this);
 
-		progressBarProcess.setPreferredSize(new Dimension(
-				(int) (commandsPanel.getSize().getWidth()
-						- singleObjectDimension.getWidth()
-						- singleSpacerDimension.getWidth()),
-				(int) singleObjectDimension.getWidth()));
+		progressBarProcess.setSize(new Dimension(
+				(int) (3 * singleObjectDimension.getWidth()
+						+ 2 * singleSpacerDimension.getWidth()),
+				(int) singleObjectDimension.getHeight()));
 		progressBarProcess.setMaximumSize(new Dimension(
-				(int) (commandsPanel.getSize().getWidth()
-						- singleObjectDimension.getWidth()
-						- singleSpacerDimension.getWidth()),
-				(int) singleObjectDimension.getWidth()));
-		exitBtn.setPreferredSize(singleObjectDimension);
+				(int) (3 * singleObjectDimension.getWidth()
+						+ 2 * singleSpacerDimension.getWidth()),
+				(int) singleObjectDimension.getHeight()));
+		progressBarProcess.setLocation(0, 0);
+		saveBtn.setSize(singleObjectDimension);
+		saveBtn.setMaximumSize(singleObjectDimension);
+		saveBtn.setLocation((int) (3 * (singleObjectDimension.getWidth()
+				+ singleSpacerDimension.getWidth())), 0);
+		exitBtn.setSize(singleObjectDimension);
 		exitBtn.setMaximumSize(singleObjectDimension);
+		exitBtn.setLocation((int) (4 * (singleObjectDimension.getWidth()
+				+ singleSpacerDimension.getWidth())), 0);
 		progressPanel.add(progressBarProcess);
-		progressPanel.add(Box.createHorizontalGlue());
+		progressPanel.add(saveBtn);
+		//progressPanel.add(Box.createHorizontalGlue());
 		progressPanel.add(exitBtn);
 		
+
 		bottomPanel = new JPanel();
 		bottomPanel.setBounds((int) (progressPanel.getLocation().x),
 				(int) (progressPanel.getLocation().y
 						+ progressPanel.getSize().getHeight()
 						+ singleSpacerDimension.getHeight()),
-				(int) commandsPanel.getSize().getWidth(),
+				(int) picture_commandsPanel.getSize().getWidth(),
 				(int) (singleObjectDimension.getHeight()));
 		bottomPanel.setMaximumSize(
-				new Dimension((int) commandsPanel.getSize().getWidth(),
+				new Dimension((int) picture_commandsPanel.getSize().getWidth(),
 						(int) (singleObjectDimension.getHeight())));
 		mainFrame.getContentPane().add(bottomPanel);
 		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
@@ -901,6 +907,12 @@ public class PictureTravelSuiteClass extends JPanel
 			String versionNumber = executeCommand(new String[]{cmdExecutables.get("convert").toString(), "-version"});
 			addToLog("Found convert version " + versionNumber.substring(versionNumber.indexOf("ImageMagick ") + ((String) "ImageMagick ").length(), versionNumber.indexOf(" http://")));
 		}
+		cmdFile = searchProgram("gpsbabel", separated, OSrelated);
+		if (cmdFile != null) {
+			cmdExecutables.put("gpsbabel", cmdFile);
+			String versionNumber = executeCommand(new String[]{cmdExecutables.get("gpsbabel").toString(), "-V"});
+			addToLog("Found gpsbabel version " + versionNumber.substring(versionNumber.indexOf("GPSBabel Version ") + ((String) "GPSBabel Version ").length()));
+		}
 	}
 
 	private File searchProgram(String searchString, List<String> separated,
@@ -930,6 +942,12 @@ public class PictureTravelSuiteClass extends JPanel
 							break;
 						}
 						break;
+					case "gpsbabel":
+						if (executeCommand(
+								new String[]{testFile.toString(), "-V"})
+										.contains("GPSBabel"))
+							return testFile;
+						break;
 					default :
 						break;
 				}
@@ -938,43 +956,43 @@ public class PictureTravelSuiteClass extends JPanel
 		return null;
 	}
 	private void GetConfigProps() {
-		photographerText.setText(configProps.getProperty("author"));
-		copyrightChckbx.setSelected(configProps.getProperty("copyright")
+		picture_photographerText.setText(configProps.getProperty("author"));
+		picture_copyrightChckbx.setSelected(configProps.getProperty("copyright")
 				.compareTo(configurationBoolean[0]) == 0);
-		commentChckbx.setSelected(configProps.getProperty("info")
+		picture_commentChckbx.setSelected(configProps.getProperty("info")
 				.compareTo(configurationBoolean[0]) == 0);
-		colorProfileChckbx.setSelected(configProps.getProperty("cprofile")
+		picture_colorProfileChckbx.setSelected(configProps.getProperty("cprofile")
 				.compareTo(configurationBoolean[0]) == 0);
-		cleanExifChckbx.setSelected(configProps.getProperty("noexif")
+		picture_cleanExifChckbx.setSelected(configProps.getProperty("noexif")
 				.compareTo(configurationBoolean[0]) == 0);
-		colorProfileFile.setSelectedItem(
+		picture_colorProfileFile.setSelectedItem(
 				(String) configProps.getProperty("cprofileFile"));
-		watermarkChckbx.setSelected(configProps.getProperty("watermark")
+		picture_watermarkChckbx.setSelected(configProps.getProperty("watermark")
 				.compareTo(configurationBoolean[0]) == 0);
-		watermarkSize.setSelectedItem(Float
-				.parseFloat(configProps.getProperty("watermarkSize")));
-		watermarkFont.setSelectedItem(
-				(String) (configProps.getProperty("watermarkFont")));
-		watermarkPosition.setSelectedItem(
-				(String) (configProps.getProperty("watermarkPosition")));
-		frameChckbx.setSelected(configProps.getProperty("frame")
+		picture_watermarkSize.setSelectedItem(Float
+				.parseFloat(configProps.getProperty("picture_watermarkSize")));
+		picture_watermarkFont.setSelectedItem(
+				(String) (configProps.getProperty("picture_watermarkFont")));
+		picture_watermarkPosition.setSelectedItem(
+				(String) (configProps.getProperty("picture_watermarkPosition")));
+		picture_frameChckbx.setSelected(configProps.getProperty("frame")
 				.compareTo(configurationBoolean[0]) == 0);
-		frameColor.setSelectedItem(
-				(String) (configProps.getProperty("frameColor")));
-		frameType.setSelectedItem(
-				(String) (configProps.getProperty("frameType")));
-		frameSize.setSelectedItem(
-				Float.parseFloat(configProps.getProperty("frameSize")));
-		frameThickness.setSelectedItem(
-				Float.parseFloat(configProps.getProperty("frameThickness")));
-		resizeChckbx.setSelected(configProps.getProperty("resize")
+		picture_frameColor.setSelectedItem(
+				(String) (configProps.getProperty("picture_frameColor")));
+		picture_frameType.setSelectedItem(
+				(String) (configProps.getProperty("picture_frameType")));
+		picture_frameSize.setSelectedItem(
+				Float.parseFloat(configProps.getProperty("picture_frameSize")));
+		picture_frameThickness.setSelectedItem(
+				Float.parseFloat(configProps.getProperty("picture_frameThickness")));
+		picture_resizeChckbx.setSelected(configProps.getProperty("resize")
 				.compareTo(configurationBoolean[0]) == 0);
-		resizeEdge.setSelectedItem(
-				(String) (configProps.getProperty("resizeEdge")));
-		resizeValue.setSelectedItem(
+		picture_resizeEdge.setSelectedItem(
+				(String) (configProps.getProperty("picture_resizeEdge")));
+		picture_resizeValue.setSelectedItem(
 				(String) (configProps.getProperty("resizeSize")));
-		resizeFullHDChckbx.setSelected(false);
-		resizeUltraHDChckbx.setSelected(false);
+		picture_resizeFullHDChckbx.setSelected(false);
+		picture_resizeUltraHDChckbx.setSelected(false);
 	}
 
 	private void ResetConfigProps(boolean defaultValues) {
@@ -986,60 +1004,60 @@ public class PictureTravelSuiteClass extends JPanel
 			configPropsDefault.setProperty("cprofile", configurationBoolean[0]);
 			configPropsDefault.setProperty("cprofileFile", "srgb");
 			configPropsDefault.setProperty("frame", configurationBoolean[1]);
-			configPropsDefault.setProperty("frameColor", "white");
-			configPropsDefault.setProperty("frameType", "Inner");
-			configPropsDefault.setProperty("frameSize", "2.0");
-			configPropsDefault.setProperty("frameThickness", "0.25");
+			configPropsDefault.setProperty("picture_frameColor", "white");
+			configPropsDefault.setProperty("picture_frameType", "Inner");
+			configPropsDefault.setProperty("picture_frameSize", "2.0");
+			configPropsDefault.setProperty("picture_frameThickness", "0.25");
 			configPropsDefault.setProperty("watermark",configurationBoolean[1]);
-			configPropsDefault.setProperty("watermarkSize", "2.0");
-			configPropsDefault.setProperty("watermarkFont", "FFXMarquee");
-			configPropsDefault.setProperty("watermarkPosition", "southeast");
+			configPropsDefault.setProperty("picture_watermarkSize", "2.0");
+			configPropsDefault.setProperty("picture_watermarkFont", "FFXMarquee");
+			configPropsDefault.setProperty("picture_watermarkPosition", "southeast");
 			configPropsDefault.setProperty("resize",configurationBoolean[1]);
-			configPropsDefault.setProperty("resizeEdge", "Lungo");
+			configPropsDefault.setProperty("picture_resizeEdge", "Long");
 			configPropsDefault.setProperty("resizeSize", "1200");
 		} else {
-			configProps.setProperty("author", photographerText.getText());
-			configProps.setProperty("copyright", copyrightChckbx.isSelected()
+			configProps.setProperty("author", picture_photographerText.getText());
+			configProps.setProperty("copyright", picture_copyrightChckbx.isSelected()
 					? configurationBoolean[0]
 					: configurationBoolean[1]);
-			configProps.setProperty("info", commentChckbx.isSelected()
+			configProps.setProperty("info", picture_commentChckbx.isSelected()
 					? configurationBoolean[0]
 					: configurationBoolean[1]);
-			configProps.setProperty("noexif", cleanExifChckbx.isSelected()
+			configProps.setProperty("noexif", picture_cleanExifChckbx.isSelected()
 					? configurationBoolean[0]
 					: configurationBoolean[1]);
-			configProps.setProperty("cprofile", colorProfileChckbx.isSelected()
+			configProps.setProperty("cprofile", picture_colorProfileChckbx.isSelected()
 					? configurationBoolean[0]
 					: configurationBoolean[1]);
 			configProps.setProperty("cprofileFile",
-					(String) colorProfileFile.getSelectedItem());
-			configProps.setProperty("frame", frameChckbx.isSelected()
+					(String) picture_colorProfileFile.getSelectedItem());
+			configProps.setProperty("frame", picture_frameChckbx.isSelected()
 					? configurationBoolean[0]
 					: configurationBoolean[1]);
-			configProps.setProperty("frameColor",
-					(String) (frameColor.getSelectedItem()));
-			configProps.setProperty("frameType",
-					(String) (frameType.getSelectedItem()));
-			configProps.setProperty("frameSize",
-					frameSize.getSelectedItem().toString());
-			configProps.setProperty("frameThickness",
-					frameThickness.getSelectedItem().toString());
-			configProps.setProperty("watermark", watermarkChckbx.isSelected()
+			configProps.setProperty("picture_frameColor",
+					(String) (picture_frameColor.getSelectedItem()));
+			configProps.setProperty("picture_frameType",
+					(String) (picture_frameType.getSelectedItem()));
+			configProps.setProperty("picture_frameSize",
+					picture_frameSize.getSelectedItem().toString());
+			configProps.setProperty("picture_frameThickness",
+					picture_frameThickness.getSelectedItem().toString());
+			configProps.setProperty("watermark", picture_watermarkChckbx.isSelected()
 					? configurationBoolean[0]
 					: configurationBoolean[1]);
-			configProps.setProperty("watermarkSize",
-					watermarkSize.getSelectedItem().toString());
-			configProps.setProperty("watermarkFont",
-					(String) (watermarkFont.getSelectedItem()));
-			configProps.setProperty("watermarkPosition",
-					(String) (watermarkPosition.getSelectedItem()));
-			configProps.setProperty("resize", resizeChckbx.isSelected()
+			configProps.setProperty("picture_watermarkSize",
+					picture_watermarkSize.getSelectedItem().toString());
+			configProps.setProperty("picture_watermarkFont",
+					(String) (picture_watermarkFont.getSelectedItem()));
+			configProps.setProperty("picture_watermarkPosition",
+					(String) (picture_watermarkPosition.getSelectedItem()));
+			configProps.setProperty("resize", picture_resizeChckbx.isSelected()
 					? configurationBoolean[0]
 					: configurationBoolean[1]);
-			configProps.setProperty("resizeEdge",
-					(String) (resizeEdge.getSelectedItem()));
+			configProps.setProperty("picture_resizeEdge",
+					(String) (picture_resizeEdge.getSelectedItem()));
 			configProps.setProperty("resizeSize",
-					(String) resizeValue.getSelectedItem());
+					(String) picture_resizeValue.getSelectedItem());
 		}
 	}
 
@@ -1094,13 +1112,13 @@ public class PictureTravelSuiteClass extends JPanel
 	private File[] SelectFiles(List<String> allowedExtensions,
 			boolean caseSensitive) {
 		/*
-		 * File[] listOfFiles = this.folderInput.listFiles(new FilenameFilter()
+		 * File[] listOfFiles = this.picture_folderInput.listFiles(new FilenameFilter()
 		 * { public boolean accept(File dir, String name) { return
 		 * ((caseSensitive) ? name.endsWith("." + fileExtension) :
 		 * name.toLowerCase().endsWith("." + fileExtension)); } }); return
 		 * listOfFiles;
 		 */
-		return this.folderInput.listFiles(
+		return this.picture_folderInput.listFiles(
 				new ExtensionsFilter((String[]) allowedExtensions.toArray()));
 	}
 
@@ -1181,36 +1199,36 @@ public class PictureTravelSuiteClass extends JPanel
 	}
 
 	private void WatermarkDataEnable(boolean enable) {
-		watermarkSize.setEnabled(enable);
-		watermarkPosition.setEnabled(enable);
-		watermarkFont.setEnabled(enable);
+		picture_watermarkSize.setEnabled(enable);
+		picture_watermarkPosition.setEnabled(enable);
+		picture_watermarkFont.setEnabled(enable);
 	}
 
 	private void ResizeDataEnable(boolean enable) {
-		resizeFullHDChckbx.setEnabled(enable && !resizeUltraHDChckbx.isSelected());
-		resizeUltraHDChckbx.setEnabled(enable && !resizeFullHDChckbx.isSelected());
+		picture_resizeFullHDChckbx.setEnabled(enable && !picture_resizeUltraHDChckbx.isSelected());
+		picture_resizeUltraHDChckbx.setEnabled(enable && !picture_resizeFullHDChckbx.isSelected());
 		if (enable) {
-			ResizeCustomEnable(!(resizeFullHDChckbx.isSelected() || resizeUltraHDChckbx.isSelected()));
+			ResizeCustomEnable(!(picture_resizeFullHDChckbx.isSelected() || picture_resizeUltraHDChckbx.isSelected()));
 		}
 		else {
-			resizeValue.setEnabled(enable);
-			resizeEdge.setEnabled(enable);			
+			picture_resizeValue.setEnabled(enable);
+			picture_resizeEdge.setEnabled(enable);			
 		}
 	}
 
 	private void ResizeCustomEnable(boolean enable) {
-		resizeValue.setEnabled(enable);
-		resizeEdge.setEnabled(enable);
+		picture_resizeValue.setEnabled(enable);
+		picture_resizeEdge.setEnabled(enable);
 	}
 
 	private void ResizeCustomEnable(boolean enable, String checkbox) {
 		ResizeCustomEnable(enable);
 		switch (checkbox) {
 			case "fullhd":
-				resizeFullHDChckbx.setEnabled(enable);
+				picture_resizeFullHDChckbx.setEnabled(enable);
 				break;
 			case "ultrahd":
-				resizeUltraHDChckbx.setEnabled(enable);
+				picture_resizeUltraHDChckbx.setEnabled(enable);
 				break;
 			default:
 	            break;
@@ -1218,15 +1236,15 @@ public class PictureTravelSuiteClass extends JPanel
 	}
 
 	private void FrameDataEnable(boolean enable) {
-		frameColor.setEnabled(enable);
-		frameSize.setEnabled(enable);
-		frameThickness.setEnabled(enable);
-		frameType.setEnabled(enable);
+		picture_frameColor.setEnabled(enable);
+		picture_frameSize.setEnabled(enable);
+		picture_frameThickness.setEnabled(enable);
+		picture_frameType.setEnabled(enable);
 	}
 
 	private void ColorProfileDataEnable(boolean enable) {
-		colorProfileFile.setEnabled(enable);
-		colorProfileIntent.setEnabled(enable);
+		picture_colorProfileFile.setEnabled(enable);
+		picture_colorProfileIntent.setEnabled(enable);
 	}
 
 	private String GetOffset(String textPosition, Point offsetPoint) {
@@ -1266,19 +1284,19 @@ public class PictureTravelSuiteClass extends JPanel
 		String[] command;
 		String tmpdata;
 
-		Dimension imgSize = GetImageSize(workingFile, folderOutput);
+		Dimension imgSize = GetImageSize(workingFile, picture_folderOutput);
 
 		float dimension = (int) Max((float) imgSize.getWidth(),
 				(float) imgSize.getHeight());
 
 		dimension = (float) (((float) dimension) / 100.0
-				* ((float) watermarkSize.getSelectedItem()));
+				* ((float) picture_watermarkSize.getSelectedItem()));
 		dimension = (float) ((dimension < 15) ? 15.0 : dimension);
 
-		String watermark = copyrightSymbol + " " + photographerText.getText();
+		String watermark = copyrightSymbol + " " + picture_photographerText.getText();
 		command = new String[]{cmdExecutables.get("exiftool").toString(), "-d",
 				"%Y", "-DateTimeOriginal", "-S", "-s",
-				folderOutput + File.separator + workingFile};
+				picture_folderOutput + File.separator + workingFile};
 
 		tmpdata = executeCommand(command);
 		watermark += (!tmpdata.isEmpty()) ? (" | " + tmpdata) : ("");
@@ -1305,20 +1323,20 @@ public class PictureTravelSuiteClass extends JPanel
 		offsetCorner = ScalePoint(offsetCorner, scaleFactor);
 
 		String offset = GetOffset(
-				watermarkPosition.getSelectedItem().toString(), offsetCorner);
+				picture_watermarkPosition.getSelectedItem().toString(), offsetCorner);
 
 		try {
 			command = new String[]{cmdExecutables.get("convert").toString(),
-					folderOutput + File.separator + workingFile, "-font",
-					ExportResource(watermarkFontArray
-							.get(watermarkFont.getSelectedIndex())),
+					picture_folderOutput + File.separator + workingFile, "-font",
+					ExportResource(picture_watermarkFontArray
+							.get(picture_watermarkFont.getSelectedIndex())),
 					"-pointsize", Float.toString(dimension), "-gravity",
-					watermarkPosition.getSelectedItem().toString(), "-stroke",
+					picture_watermarkPosition.getSelectedItem().toString(), "-stroke",
 					"#000C", "-strokewidth",
 					Float.toString((float) (dimension / 10.0)), "-annotate",
 					offset, watermark, "-stroke", "none", "-fill", "white",
 					"-annotate", offset, watermark,
-					folderOutput + File.separator + workingFile};
+					picture_folderOutput + File.separator + workingFile};
 			executeCommand(command);
 		} catch (Exception e) {
 			addToLog(e.getMessage(), Color.RED, false);
@@ -1332,40 +1350,40 @@ public class PictureTravelSuiteClass extends JPanel
 
 		String[] command;
 
-		Dimension imgSize = GetImageSize(workingFile, folderOutput);
+		Dimension imgSize = GetImageSize(workingFile, picture_folderOutput);
 
-		if (resizeFullHDChckbx.isSelected()) {
+		if (picture_resizeFullHDChckbx.isSelected()) {
 			String size = "1920x1080";
 			command = new String[]{cmdExecutables.get("convert").toString(),
-					folderOutput + File.separator + workingFile, "-resize",
-					size, folderOutput + File.separator + workingFile};
+					picture_folderOutput + File.separator + workingFile, "-resize",
+					size, picture_folderOutput + File.separator + workingFile};
 		}
-		else if (resizeUltraHDChckbx.isSelected()) {
+		else if (picture_resizeUltraHDChckbx.isSelected()) {
 				String size = "3840x2160";
 				command = new String[]{cmdExecutables.get("convert").toString(),
-						folderOutput + File.separator + workingFile, "-resize",
-						size, folderOutput + File.separator + workingFile};
+						picture_folderOutput + File.separator + workingFile, "-resize",
+						size, picture_folderOutput + File.separator + workingFile};
 			}
 		else {
 			float resizeRatio = 100;
 			int dimensionRef = 1000;
 			dimensionRef = (int) Max((float) imgSize.getWidth(),
 					(float) imgSize.getHeight());
-			if (resizeEdge.getSelectedItem().toString()
-					.compareToIgnoreCase("corto") == 0)
+			if (picture_resizeEdge.getSelectedItem().toString()
+					.compareToIgnoreCase("short") == 0)
 				dimensionRef = (int) Min((float) imgSize.getWidth(),
 						(float) imgSize.getHeight());
 			try {
 				resizeRatio = (float) (((float) Integer
-						.parseInt(resizeValue.getSelectedItem().toString()))
+						.parseInt(picture_resizeValue.getSelectedItem().toString()))
 						/ ((float) dimensionRef) * 100.0);
 			} catch (Exception e) {
 				addToLog("Exception");
 			}
 			command = new String[]{cmdExecutables.get("convert").toString(),
-					folderOutput + File.separator + workingFile, "-resize",
+					picture_folderOutput + File.separator + workingFile, "-resize",
 					Float.toString(resizeRatio) + "%",
-					folderOutput + File.separator + workingFile};
+					picture_folderOutput + File.separator + workingFile};
 		}
 
 		executeCommand(command);
@@ -1376,9 +1394,9 @@ public class PictureTravelSuiteClass extends JPanel
 			return null;
 		addToLog("Adding frame to " + workingFile);
 
-		float size = (float) frameSize.getSelectedItem();
-		String mode = frameType.getSelectedItem().toString();
-		String color = frameColor.getSelectedItem().toString();
+		float size = (float) picture_frameSize.getSelectedItem();
+		String mode = picture_frameType.getSelectedItem().toString();
+		String color = picture_frameColor.getSelectedItem().toString();
 
 		Point offset = new Point();
 
@@ -1403,12 +1421,12 @@ public class PictureTravelSuiteClass extends JPanel
 				break;
 			case "Blur":
 				ArrayList<Point> corners = getCorners(
-						GetImageSize(workingFile, folderOutput), size);
+						GetImageSize(workingFile, picture_folderOutput), size);
 				String command[] = new String[]{
 						cmdExecutables.get("convert").toString(), "(",
-						folderOutput + File.separator + workingFile, "-blur",
+						picture_folderOutput + File.separator + workingFile, "-blur",
 						"0x20", ")", "(",
-						folderOutput + File.separator + workingFile, "-crop",
+						picture_folderOutput + File.separator + workingFile, "-crop",
 						Math.round(corners.get(1).x - corners.get(0).x) + "x"
 								+ Math.round(
 										corners.get(1).y - corners.get(0).y)
@@ -1418,7 +1436,7 @@ public class PictureTravelSuiteClass extends JPanel
 						"+" + Math.round(corners.get(0).x) + "+"
 								+ Math.round(corners.get(0).y),
 						"-composite",
-						folderOutput + File.separator + workingFile};
+						picture_folderOutput + File.separator + workingFile};
 				executeCommand(command);
 				offset = FrameCommand(workingFile, "Inner", size, color);
 				break;
@@ -1439,9 +1457,9 @@ public class PictureTravelSuiteClass extends JPanel
 			return new Point(0, 0);
 
 		String[] command;
-		float thick = (float) frameThickness.getSelectedItem();
+		float thick = (float) picture_frameThickness.getSelectedItem();
 
-		Dimension imgSize = GetImageSize(workingFile, folderOutput);
+		Dimension imgSize = GetImageSize(workingFile, picture_folderOutput);
 
 		ArrayList<Point> corners = getCorners(imgSize, size);
 
@@ -1451,19 +1469,19 @@ public class PictureTravelSuiteClass extends JPanel
 		switch (mode) {
 			case "Inner":
 				command = new String[]{cmdExecutables.get("convert").toString(),
-						folderOutput + File.separator + workingFile, "-fill",
+						picture_folderOutput + File.separator + workingFile, "-fill",
 						"none", "-stroke", color, "-strokewidth",
 						Float.toString(thick), "-draw",
 						"\"rectangle " + Math.round(corners.get(0).x) + ","
 								+ Math.round(corners.get(0).y) + " "
 								+ Math.round(corners.get(1).x) + ","
 								+ Math.round(corners.get(1).y) + "\"",
-						folderOutput + File.separator + workingFile};
+						picture_folderOutput + File.separator + workingFile};
 				executeCommand(command);
 				break;
 			case "Rounded":
 				command = new String[]{cmdExecutables.get("convert").toString(),
-						folderOutput + File.separator + workingFile, "-fill",
+						picture_folderOutput + File.separator + workingFile, "-fill",
 						"none", "-stroke", color, "-strokewidth",
 						Float.toString(thick), "-draw",
 						"\"roundrectangle " + Math.round(corners.get(0).x) + ","
@@ -1476,15 +1494,15 @@ public class PictureTravelSuiteClass extends JPanel
 								+ Math.round(
 										Max(corners.get(0).x, corners.get(0).y))
 								+ "\"",
-						folderOutput + File.separator + workingFile};
+						picture_folderOutput + File.separator + workingFile};
 				executeCommand(command);
 				break;
 			case "Plain":
 				command = new String[]{cmdExecutables.get("convert").toString(),
-						folderOutput + File.separator + workingFile,
+						picture_folderOutput + File.separator + workingFile,
 						"-bordercolor", color, "-border",
 						size + "%x" + size + "%",
-						folderOutput + File.separator + workingFile};
+						picture_folderOutput + File.separator + workingFile};
 				executeCommand(command);
 				break;
 			default :
@@ -1514,10 +1532,10 @@ public class PictureTravelSuiteClass extends JPanel
 		try {
 			String[] command = new String[]{
 					cmdExecutables.get("convert").toString(),
-					folderOutput + File.separator + workingFile,
-					"-intent", colorProfileIntent.getSelectedItem().toString(), "-profile",
-					ExportResource(colorProfileFileArray.get(colorProfileFile.getSelectedIndex())),
-					folderOutput + File.separator + workingFile};
+					picture_folderOutput + File.separator + workingFile,
+					"-intent", picture_colorProfileIntent.getSelectedItem().toString(), "-profile",
+					ExportResource(picture_colorProfileFileArray.get(picture_colorProfileFile.getSelectedIndex())),
+					picture_folderOutput + File.separator + workingFile};
 			//addToLog("Command " + Arrays.toString(command));
 			executeCommand(command);
 		} catch (Exception e) {
@@ -1534,7 +1552,7 @@ public class PictureTravelSuiteClass extends JPanel
 		String commentname = workingFile.substring(0,
 				workingFile.lastIndexOf('.'));
 		command = new String[]{cmdExecutables.get("exiftool").toString(), "-d",
-				"%Y", folderOutput + File.separator + workingFile,
+				"%Y", picture_folderOutput + File.separator + workingFile,
 				"-comment=" + commentname, "-UserComment=" + commentname,
 				"-overwrite_original"};
 		executeCommand(command);
@@ -1547,22 +1565,22 @@ public class PictureTravelSuiteClass extends JPanel
 
 		String[] command;
 		String tmpdata;
-		String copyright = photographerText.getText();
+		String copyright = picture_photographerText.getText();
 		command = new String[]{cmdExecutables.get("exiftool").toString(), "-d",
 				"%Y", "-DateTimeOriginal", "-S", "-s",
-				folderOutput + File.separator + workingFile};
+				picture_folderOutput + File.separator + workingFile};
 		tmpdata = executeCommand(command);
 		if (!tmpdata.isEmpty())
 			copyright += ", " + tmpdata;
 		copyright += ". All rights reserved.";
 
 		command = new String[]{cmdExecutables.get("exiftool").toString(),
-				folderOutput + File.separator + workingFile,
-				"-artist=" + photographerText.getText(),
-				"-creator=" + photographerText.getText(),
-				"-xpauthor=" + photographerText.getText(),
+				picture_folderOutput + File.separator + workingFile,
+				"-artist=" + picture_photographerText.getText(),
+				"-creator=" + picture_photographerText.getText(),
+				"-xpauthor=" + picture_photographerText.getText(),
 				"-copyright=" + copyrightSymbol + " " + copyright,
-				"-ownername=" + photographerText.getText(),
+				"-ownername=" + picture_photographerText.getText(),
 				/*"-PropertyReleaseStatus='PR-NON'",
 				"-XMP-iptcExt:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture",*/
 				"-XMP-dc:Rights=" + copyright, "-XMP-xmpRights:Marked=True",
@@ -1579,7 +1597,7 @@ public class PictureTravelSuiteClass extends JPanel
 
 		String[] command = new String[]{
 				cmdExecutables.get("exiftool").toString(),
-				folderOutput + File.separator + workingFile, "-software=",
+				picture_folderOutput + File.separator + workingFile, "-software=",
 				"-creatortool=", "-XMP-xmp:all=", "-XMP-xmpMM:all=",
 				"-XMP-photoshop:all=", "-XMP-aux:all=", "-photoshop:all=",
 				"-overwrite_original"};
@@ -1593,7 +1611,7 @@ public class PictureTravelSuiteClass extends JPanel
 
 		String[] command = new String[]{
 				cmdExecutables.get("exiftool").toString(),
-				folderOutput + File.separator + workingFile,
+				picture_folderOutput + File.separator + workingFile,
 				"-software=" + softwareInfo, "-creatortool=" + softwareInfo,
 				"-overwrite_original"};
 		executeCommand(command);
@@ -1601,7 +1619,7 @@ public class PictureTravelSuiteClass extends JPanel
 
 	private String executeCommand(String[] command) {
 		ProcessBuilder ps = new ProcessBuilder(command);
-		ps.directory(folderOutput);
+		ps.directory(picture_folderOutput);
 		ps.redirectErrorStream(true);
 		StringBuilder builder = new StringBuilder();
 		String line;
@@ -1726,15 +1744,15 @@ public class PictureTravelSuiteClass extends JPanel
 			setProgress(progressBarProcess.getMinimum());
 			progressBarProcess.setValue(progressBarProcess.getMinimum());
 			addToLog("Process started.");
-			if (folderInput == null) {
+			if (picture_folderInput == null) {
 				addToLog("ERROR: Select a source folder first!", Color.RED, false);
 				return null;
 			}
-			if (!(watermarkChckbx.isSelected() || resizeChckbx.isSelected()
-					|| frameChckbx.isSelected() || copyrightChckbx.isSelected()
-					|| colorProfileChckbx.isSelected()
-					|| cleanExifChckbx.isSelected()
-					|| commentChckbx.isSelected())) {
+			if (!(picture_watermarkChckbx.isSelected() || picture_resizeChckbx.isSelected()
+					|| picture_frameChckbx.isSelected() || picture_copyrightChckbx.isSelected()
+					|| picture_colorProfileChckbx.isSelected()
+					|| picture_cleanExifChckbx.isSelected()
+					|| picture_commentChckbx.isSelected())) {
 				addToLog("ERROR: No process selected.", Color.RED, false);
 				return null;
 			}
@@ -1752,14 +1770,14 @@ public class PictureTravelSuiteClass extends JPanel
 			}
 			addToLog("Processing files with extensions: " + tmpStr);
 
-			if (folderInput != folderOutput) {
+			if (picture_folderInput != picture_folderOutput) {
 				addToLog("Start, copy of files from source to target", false);
 				try {
 					for (int iter = 0; (iter < listOfFiles.length
 							&& isRunning); iter++) {
 						if (listOfFiles[iter].isFile()) {
 							Files.copy(listOfFiles[iter].toPath(),
-									new File(folderOutput.toString()
+									new File(picture_folderOutput.toString()
 											+ File.separator
 											+ listOfFiles[iter].getName())
 													.toPath(),
@@ -1874,27 +1892,27 @@ public class PictureTravelSuiteClass extends JPanel
 	}
 
 	private void CommandsEnable(boolean enabled) {
-		startBtn.setEnabled(enabled);
+		picture_startBtn.setEnabled(enabled);
 		exitBtn.setEnabled(enabled);
 		saveBtn.setEnabled(enabled);
-		cancelBtn.setEnabled(!enabled);
-		selectInputFolderBtn.setEnabled(enabled);
+		picture_cancelBtn.setEnabled(!enabled);
+		picture_selectInputFolderBtn.setEnabled(enabled);
 		selectOutputFolderBtn.setEnabled(enabled);
 
-		colorProfileChckbx.setEnabled(enabled);
-		watermarkChckbx.setEnabled(enabled);
-		frameChckbx.setEnabled(enabled);
-		resizeChckbx.setEnabled(enabled);
-		colorProfileChckbx.setEnabled(enabled);
-		copyrightChckbx.setEnabled(enabled);
-		commentChckbx.setEnabled(enabled);
-		cleanExifChckbx.setEnabled(enabled);
+		picture_colorProfileChckbx.setEnabled(enabled);
+		picture_watermarkChckbx.setEnabled(enabled);
+		picture_frameChckbx.setEnabled(enabled);
+		picture_resizeChckbx.setEnabled(enabled);
+		picture_colorProfileChckbx.setEnabled(enabled);
+		picture_copyrightChckbx.setEnabled(enabled);
+		picture_commentChckbx.setEnabled(enabled);
+		picture_cleanExifChckbx.setEnabled(enabled);
 
 		if (enabled) {
-			WatermarkDataEnable(watermarkChckbx.isSelected());
-			ResizeDataEnable(resizeChckbx.isSelected());
-			FrameDataEnable(frameChckbx.isSelected());
-			ColorProfileDataEnable(colorProfileChckbx.isSelected());
+			WatermarkDataEnable(picture_watermarkChckbx.isSelected());
+			ResizeDataEnable(picture_resizeChckbx.isSelected());
+			FrameDataEnable(picture_frameChckbx.isSelected());
+			ColorProfileDataEnable(picture_colorProfileChckbx.isSelected());
 		} else {
 			WatermarkDataEnable(false);
 			ResizeDataEnable(false);
@@ -1931,13 +1949,13 @@ public class PictureTravelSuiteClass extends JPanel
 				SaveConfiguration();
 				break;
 			case "folder":
-				if (evt.getSource() == selectInputFolderBtn) {
+				if (evt.getSource() == picture_selectInputFolderBtn) {
 					if (fileChooser.showOpenDialog(
 							mainFrame) == JFileChooser.APPROVE_OPTION) {
-						folderInput = fileChooser.getSelectedFile();
-						folderOutput = folderInput;
-						folderInputText.setText(folderInput.toString());
-						startBtn.setEnabled(true);
+						picture_folderInput = fileChooser.getSelectedFile();
+						picture_folderOutput = picture_folderInput;
+						picture_folderInputText.setText(picture_folderInput.toString());
+						picture_startBtn.setEnabled(true);
 						selectOutputFolderBtn.setEnabled(true);
 					} else {
 						addToLog("Source folder not selected.", false);
@@ -1946,41 +1964,41 @@ public class PictureTravelSuiteClass extends JPanel
 				if (evt.getSource() == selectOutputFolderBtn) {
 					if (fileChooser.showOpenDialog(
 							mainFrame) == JFileChooser.APPROVE_OPTION) {
-						folderOutput = fileChooser.getSelectedFile();
-						folderOutputText.setText(folderOutput.toString());
+						picture_folderOutput = fileChooser.getSelectedFile();
+						picture_folderOutputText.setText(picture_folderOutput.toString());
 					} else {
 						addToLog("Target folder not selected: overwriting files in the source folder.", false);
 					}
 				}
 				break;
 			case "colorProfile":
-				if (evt.getSource() == colorProfileChckbx) {
-					ColorProfileDataEnable(colorProfileChckbx.isSelected());
+				if (evt.getSource() == picture_colorProfileChckbx) {
+					ColorProfileDataEnable(picture_colorProfileChckbx.isSelected());
 				}
 				break;
 			case "watermark":
-				if (evt.getSource() == watermarkChckbx) {
-					WatermarkDataEnable(watermarkChckbx.isSelected());
+				if (evt.getSource() == picture_watermarkChckbx) {
+					WatermarkDataEnable(picture_watermarkChckbx.isSelected());
 				}
 				break;
 			case "frame":
-				if (evt.getSource() == frameChckbx) {
-					FrameDataEnable(frameChckbx.isSelected());
+				if (evt.getSource() == picture_frameChckbx) {
+					FrameDataEnable(picture_frameChckbx.isSelected());
 				}
 				break;
 			case "resize":
-				if (evt.getSource() == resizeChckbx) {
-					ResizeDataEnable(resizeChckbx.isSelected());
+				if (evt.getSource() == picture_resizeChckbx) {
+					ResizeDataEnable(picture_resizeChckbx.isSelected());
 				}
 				break;
 			case "fullhd":
-				if (evt.getSource() == resizeFullHDChckbx) {
-					ResizeCustomEnable(!resizeFullHDChckbx.isSelected(), "ultrahd");
+				if (evt.getSource() == picture_resizeFullHDChckbx) {
+					ResizeCustomEnable(!picture_resizeFullHDChckbx.isSelected(), "ultrahd");
 				}
 				break;
 			case "ultrahd":
-				if (evt.getSource() == resizeUltraHDChckbx) {
-					ResizeCustomEnable(!resizeUltraHDChckbx.isSelected(), "fullhd");
+				if (evt.getSource() == picture_resizeUltraHDChckbx) {
+					ResizeCustomEnable(!picture_resizeUltraHDChckbx.isSelected(), "fullhd");
 				}
 				break;
 			default :
@@ -2115,19 +2133,19 @@ public class PictureTravelSuiteClass extends JPanel
 					boolean allOk = true;
 
 					Point offsetCorner = new Point();
-					if (colorProfileChckbx.isSelected())
+					if (picture_colorProfileChckbx.isSelected())
 						ColorProfileCommand(filesToProcess[iter]);
-					if (frameChckbx.isSelected())
+					if (picture_frameChckbx.isSelected())
 						offsetCorner = FrameCommand(filesToProcess[iter]);
-					if (watermarkChckbx.isSelected())
+					if (picture_watermarkChckbx.isSelected())
 						WatermarkCommand(filesToProcess[iter], offsetCorner);
-					if (resizeChckbx.isSelected())
+					if (picture_resizeChckbx.isSelected())
 						ResizeCommand(filesToProcess[iter]);
-					if (cleanExifChckbx.isSelected())
+					if (picture_cleanExifChckbx.isSelected())
 						CleanExifCommand(filesToProcess[iter]);
-					if (commentChckbx.isSelected())
+					if (picture_commentChckbx.isSelected())
 						UpdateCommentExif(filesToProcess[iter]);
-					if (copyrightChckbx.isSelected())
+					if (picture_copyrightChckbx.isSelected())
 						UpdateCopyrightExif(filesToProcess[iter]);
 					AddSoftwareEditor(filesToProcess[iter]);
 
