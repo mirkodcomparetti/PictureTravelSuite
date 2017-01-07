@@ -87,7 +87,7 @@ public class PictureTravelSuiteClass extends JPanel
 	/**
 	 * @wbp.nonvisual location=12,-6
 	 */
-	private final JFileChooser fileChooser = new JFileChooser();
+	private final JFileChooser picture_fileChooser = new JFileChooser();
 
 	private JTabbedPane mainTab;
 
@@ -153,6 +153,14 @@ public class PictureTravelSuiteClass extends JPanel
 	private JLabel errorMsg;
 
 	private JLabel travel_tmpMsg;
+	
+	private JPanel travel_filesPanel;
+	private File travel_fileInput;
+	private JButton travel_selectInputFileBtn;
+	private JTextField travel_fileInputText;
+	private File travel_fileOutput;
+	private JButton travel_selectOutputFileBtn;
+	private JTextField travel_fileOutputText;
 
 	private Dimension singleObjectDimension = new Dimension(125, 40);
 	private Dimension singleSpacerDimension = new Dimension(10, 10);
@@ -244,6 +252,9 @@ public class PictureTravelSuiteClass extends JPanel
 		ResizeDataEnable(false);
 		FrameDataEnable(false);
 		ColorProfileDataEnable(false);
+		
+		travel_selectInputFileBtn.setEnabled(false);
+		travel_selectOutputFileBtn.setEnabled(false);
 	}
 
 	/**
@@ -259,6 +270,8 @@ public class PictureTravelSuiteClass extends JPanel
 
 		picture_folderInput = null;
 		picture_folderOutput = null;
+		travel_fileInput = null;
+		travel_fileOutput = null;
 		isRunning = false;
 
 		mainFrame = new JFrame();
@@ -306,12 +319,12 @@ public class PictureTravelSuiteClass extends JPanel
 				(int) (picturePanel.getHeight()));
 		travelPanel.setLayout(null);
 		
-		Action details = fileChooser.getActionMap().get("viewTypeDetails");
-		details.actionPerformed(null);
-		fileChooser.setAcceptAllFileFilterUsed(false);
-		fileChooser.setFileSelectionMode(1);
-		fileChooser.setCurrentDirectory(new java.io.File("."));
-		fileChooser.setDialogTitle("Select files and folders");
+		Action picture_details = picture_fileChooser.getActionMap().get("viewTypeDetails");
+		picture_details.actionPerformed(null);
+		picture_fileChooser.setAcceptAllFileFilterUsed(false);
+		picture_fileChooser.setFileSelectionMode(1);
+		picture_fileChooser.setCurrentDirectory(new java.io.File("."));
+		picture_fileChooser.setDialogTitle("Select files and folders");
 
 		picture_foldersPanel = new JPanel();
 		picture_foldersPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -910,6 +923,76 @@ public class PictureTravelSuiteClass extends JPanel
 				(int) singleObjectDimension.getHeight());
 		travelPanel.add(travel_tmpMsg);
 		
+		travel_filePanel = new JPanel();
+		travel_filePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		travel_filePanel.setBounds((int) singleSpacerDimension.getWidth(),
+				(int) singleSpacerDimension.getHeight(),
+				(int) (5 * (singleObjectDimension.getWidth()
+						+ singleSpacerDimension.getWidth())
+						- singleSpacerDimension.getWidth()),
+				(int) (2 * singleObjectDimension.getHeight()
+						+ singleSpacerDimension.getHeight()));
+		travelPanel.add(travel_filePanel);
+		travel_filePanel.setLayout(null);
+
+		travel_fileInputText = new JTextField();
+		travel_fileInputText.setLocation(0, 0);
+		travel_fileInputText.setToolTipText("Show the selected source file");
+		travel_fileInputText.setColumns(26);
+		travel_fileInputText.setEditable(false);
+		travel_fileInputText.setText("Source file not selected");
+
+		travel_selectInputFileBtn = new JButton("Select");
+		travel_selectInputFileBtn.setActionCommand("file");
+		travel_selectInputFileBtn.addActionListener(this);
+		travel_selectInputFileBtn
+				.setLocation((int) (travel_filePanel.getSize().getWidth()
+						- singleObjectDimension.getWidth()), 0);
+
+		travel_fileOutputText = new JTextField();
+		travel_fileOutputText.setLocation(0, (int) (singleObjectDimension.getHeight()
+				+ singleSpacerDimension.getHeight()));
+		travel_fileOutputText.setToolTipText("Show the selected target file");
+		travel_fileOutputText.setText("Target file not selected, using source file");
+		travel_fileOutputText.setEditable(false);
+		travel_fileOutputText.setColumns(26);
+
+		travel_selectOutputFileBtn = new JButton("Select");
+		travel_selectOutputFileBtn.setActionCommand("file");
+		travel_selectOutputFileBtn.addActionListener(this);
+		travel_selectOutputFileBtn.setLocation(
+				(int) (travel_filePanel.getSize().getWidth()
+						- singleObjectDimension.getWidth()),
+				(int) (singleObjectDimension.getHeight()
+						+ singleSpacerDimension.getHeight()));
+		travel_selectOutputFileBtn.setEnabled(false);
+
+		travel_fileInputText.setSize(
+				(int) (4 * singleObjectDimension.getWidth()
+						+ 3 * singleSpacerDimension.getWidth()),
+				(int) singleObjectDimension.getHeight());
+		travel_fileInputText.setMaximumSize(new Dimension(
+				(int) (4 * singleObjectDimension.getWidth()
+						+ 3 * singleSpacerDimension.getWidth()),
+				(int) singleObjectDimension.getHeight()));
+		travel_selectInputFileBtn.setSize(singleObjectDimension);
+		travel_selectInputFileBtn.setMaximumSize(singleObjectDimension);
+		travel_fileOutputText.setSize(
+				(int) (4 * singleObjectDimension.getWidth()
+						+ 3 * singleSpacerDimension.getWidth()),
+				(int) singleObjectDimension.getHeight());
+		travel_fileOutputText.setMaximumSize(new Dimension(
+				(int) (4 * singleObjectDimension.getWidth()
+						+ 3 * singleSpacerDimension.getWidth()),
+				(int) singleObjectDimension.getHeight()));
+		travel_selectOutputFileBtn.setSize(singleObjectDimension);
+		travel_selectOutputFileBtn.setMaximumSize(singleObjectDimension);
+
+		travel_filePanel.add(travel_fileInputText);
+		travel_filePanel.add(travel_selectInputFileBtn);
+		travel_filePanel.add(travel_fileOutputText);
+		travel_filePanel.add(travel_selectOutputFileBtn);
+
 		mainFrame.setSize(
 				(int) (bottomPanel.getLocation().x + bottomPanel.getSize().getWidth()
 						+ 3 * singleSpacerDimension.getWidth()),
@@ -1996,8 +2079,8 @@ public class PictureTravelSuiteClass extends JPanel
 				break;
 			case "folder":
 				if (evt.getSource() == picture_selectInputFolderBtn) {
-					if (fileChooser.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
-						picture_folderInput = fileChooser.getSelectedFile();
+					if (picture_fileChooser.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
+						picture_folderInput = picture_fileChooser.getSelectedFile();
 						picture_folderOutput = picture_folderInput;
 						picture_folderInputText.setText(picture_folderInput.toString());
 						picture_startBtn.setEnabled(true);
@@ -2007,9 +2090,9 @@ public class PictureTravelSuiteClass extends JPanel
 					}
 				}
 				if (evt.getSource() == picture_selectOutputFolderBtn) {
-					if (fileChooser.showOpenDialog(
+					if (picture_fileChooser.showOpenDialog(
 							mainFrame) == JFileChooser.APPROVE_OPTION) {
-						picture_folderOutput = fileChooser.getSelectedFile();
+						picture_folderOutput = picture_fileChooser.getSelectedFile();
 						picture_folderOutputText.setText(picture_folderOutput.toString());
 					} else {
 						addToLog("Target folder not selected: overwriting files in the source folder.", false);
