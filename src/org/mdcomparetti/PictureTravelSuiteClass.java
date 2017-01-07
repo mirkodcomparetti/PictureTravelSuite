@@ -46,7 +46,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -58,7 +58,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
-import javax.swing.border.TitledBorder;
 import javax.swing.text.*;
 import javax.swing.JLabel;
 
@@ -90,6 +89,11 @@ public class PictureTravelSuiteClass extends JPanel
 	 */
 	private final JFileChooser fileChooser = new JFileChooser();
 
+	private JTabbedPane mainTab;
+
+	private JPanel picturePanel;
+	private JPanel travelPanel;
+	
 	private JPanel picture_controlsPanel;
 	private JTextField picture_photographerText;
 	private JButton picture_startBtn;
@@ -147,6 +151,8 @@ public class PictureTravelSuiteClass extends JPanel
 	private JPanel bottomPanel;
 	private JLabel infoLbl;
 	private JLabel errorMsg;
+
+	private JLabel travel_tmpMsg;
 
 	private Dimension singleObjectDimension = new Dimension(125, 40);
 	private Dimension singleSpacerDimension = new Dimension(10, 10);
@@ -273,7 +279,38 @@ public class PictureTravelSuiteClass extends JPanel
 		mainFrame.setResizable(false);
 		// mainFrame.setLocationRelativeTo(null);
 		mainFrame.setLocationByPlatform(true);
-
+		
+		mainTab = new JTabbedPane();
+		mainTab.setVisible(true);
+		
+		mainTab.setLocation(0, 0);
+		mainTab.setBounds(0, 0,
+				(int) (5 * singleObjectDimension.getWidth()
+						+ 6 * singleSpacerDimension.getWidth()),
+				(int) (8 * singleObjectDimension.getHeight()
+						+ 10 * singleSpacerDimension.getHeight()));
+		
+		picturePanel = new JPanel();
+		picturePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		picturePanel.setLocation(0, 0);
+		picturePanel.setBounds(0, 0,
+				(int) (5 * singleObjectDimension.getWidth()
+						+ 6 * singleSpacerDimension.getWidth()),
+				(int) (8 * singleObjectDimension.getHeight()
+						+ 8 * singleSpacerDimension.getHeight()));
+		picturePanel.setLayout(null);
+		//mainFrame.getContentPane().add(picturePanel);
+		
+		travelPanel = new JPanel();
+		travelPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		travelPanel.setLocation(0, 0);
+		travelPanel.setBounds(0, 0,
+				(int) (5 * singleObjectDimension.getWidth()
+						+ 6 * singleSpacerDimension.getWidth()),
+				(int) (8 * singleObjectDimension.getHeight()
+						+ 8 * singleSpacerDimension.getHeight()));
+		travelPanel.setLayout(null);
+		
 		Action details = fileChooser.getActionMap().get("viewTypeDetails");
 		details.actionPerformed(null);
 		fileChooser.setAcceptAllFileFilterUsed(false);
@@ -290,7 +327,7 @@ public class PictureTravelSuiteClass extends JPanel
 						- singleSpacerDimension.getWidth()),
 				(int) (2 * singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight()));
-		mainFrame.getContentPane().add(picture_foldersPanel);
+		picturePanel.add(picture_foldersPanel);
 		picture_foldersPanel.setLayout(null);
 
 		picture_folderInputText = new JTextField();
@@ -360,7 +397,7 @@ public class PictureTravelSuiteClass extends JPanel
 						+ singleSpacerDimension.getWidth())
 						- singleSpacerDimension.getWidth()),
 				(int) (singleObjectDimension.getHeight()));
-		mainFrame.getContentPane().add(picture_controlsPanel);
+		picturePanel.add(picture_controlsPanel);
 		picture_controlsPanel.setLayout(null);
 
 		picture_photographerText = new JTextField();
@@ -406,7 +443,7 @@ public class PictureTravelSuiteClass extends JPanel
 						+ 4 * singleSpacerDimension.getWidth()),
 				(int) (5 * singleObjectDimension.getHeight()
 						+ 4 * singleSpacerDimension.getHeight()));
-		mainFrame.getContentPane().add(picture_commandsPanel);
+		picturePanel.add(picture_commandsPanel);
 		picture_commandsPanel.setLayout(null);
 
 		picture_miscPanel = new JPanel();
@@ -796,17 +833,18 @@ public class PictureTravelSuiteClass extends JPanel
 		logText.setTopInsertion(false);
 
 		progressPanel = new JPanel();
-		progressPanel.setBounds((int) (picture_commandsPanel.getLocation().x),
-				(int) (picture_commandsPanel.getLocation().y
-						+ picture_commandsPanel.getSize().getHeight()
+		progressPanel.setBounds((int) (mainTab.getLocation().x),
+				(int) (mainTab.getLocation().y
+						+ mainTab.getSize().getHeight()
 						+ singleSpacerDimension.getHeight()),
-				(int) picture_commandsPanel.getSize().getWidth(),
+				(int) mainTab.getSize().getWidth(),
 				(int) (singleObjectDimension.getHeight()));
 		progressPanel.setMaximumSize(
-				new Dimension((int) picture_commandsPanel.getSize().getWidth(),
+				new Dimension((int) mainTab.getSize().getWidth(),
 						(int) (singleObjectDimension.getHeight())));
 		mainFrame.getContentPane().add(progressPanel);
-		progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.X_AXIS));
+		//progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.X_AXIS));
+		progressPanel.setLayout(null);
 
 		progressBarProcess = new JProgressBar(0, 100);
 		progressBarProcess.setToolTipText("Progress");
@@ -871,11 +909,22 @@ public class PictureTravelSuiteClass extends JPanel
 		bottomPanel.add(Box.createHorizontalGlue());
 		bottomPanel.add(infoLbl);
 		
+		travel_tmpMsg = new JLabel("Travel, in progress", SwingConstants.LEFT);
+		travel_tmpMsg.setFont(new Font(errorMsg.getFont().getName(), Font.PLAIN, 10));
+		travel_tmpMsg.setSize((int) (3 * singleObjectDimension.getWidth()),
+				(int) singleObjectDimension.getHeight());
+		travelPanel.add(travel_tmpMsg);
+		
 		mainFrame.setSize(
 				(int) (bottomPanel.getLocation().x + bottomPanel.getSize().getWidth()
 						+ 2 * singleSpacerDimension.getWidth()),
 				(int) (bottomPanel.getLocation().y + bottomPanel.getSize().getHeight()
 						+ 4 * singleSpacerDimension.getHeight()));
+
+
+		mainTab.addTab("Picture", picturePanel);
+		mainTab.addTab("Travel", travelPanel);
+		mainFrame.getContentPane().add(mainTab);
 		GetProgramPaths();
 	}
 
