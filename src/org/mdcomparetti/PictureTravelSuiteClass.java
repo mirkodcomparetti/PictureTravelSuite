@@ -70,7 +70,7 @@ public class PictureTravelSuiteClass extends JPanel
 	private static final long serialSubVersionUID = 5L;
 	private static final String softwareAuthor = "Mirko D. Comparetti";
 	private static final String softwareAuthorShort = "MDC";
-	private static final String copyrightSymbol = "\uc2a9";
+	private static final String copyrightSymbol = "\u00a9";
 	private static final String softwareNameShort = "PictureTravelSuite";
 	private static final String softwareName = "Picture Travel Suite";
 	private static final String softwareInfo = softwareAuthor + " - "
@@ -104,7 +104,7 @@ public class PictureTravelSuiteClass extends JPanel
 	private JButton picture_selectInputFolderBtn;
 	private JTextField picture_folderInputText;
 	private File picture_folderOutput;
-	private JButton selectOutputFolderBtn;
+	private JButton picture_selectOutputFolderBtn;
 	private JTextField picture_folderOutputText;
 
 	Map<String, File> cmdExecutables;
@@ -230,7 +230,7 @@ public class PictureTravelSuiteClass extends JPanel
 		picture_startBtn.setEnabled(false);
 		picture_cancelBtn.setEnabled(false);
 		picture_selectInputFolderBtn.setEnabled(false);
-		selectOutputFolderBtn.setEnabled(false);
+		picture_selectOutputFolderBtn.setEnabled(false);
 		saveBtn.setEnabled(false);
 		picture_watermarkChckbx.setEnabled(false);
 		picture_resizeChckbx.setEnabled(false);
@@ -266,12 +266,6 @@ public class PictureTravelSuiteClass extends JPanel
 				.getImage(PictureTravelSuiteClass.class.getResource(
 						"/org/mdcomparetti/resources/icona_tricolore.png")));
 		mainFrame.setTitle(softwareInfoTitle);
-		mainFrame.setLocation(0, 0);
-		mainFrame.setBounds(0, 0,
-				(int) (5 * singleObjectDimension.getWidth()
-						+ 6 * singleSpacerDimension.getWidth()),
-				(int) (8 * singleObjectDimension.getHeight()
-						+ 10 * singleSpacerDimension.getHeight()));
 		mainFrame.addWindowListener(new WindowEventHandler());
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -279,16 +273,19 @@ public class PictureTravelSuiteClass extends JPanel
 		mainFrame.setResizable(false);
 		// mainFrame.setLocationRelativeTo(null);
 		mainFrame.setLocationByPlatform(true);
-		
+		mainFrame.setLocation(0, 0);
+		mainFrame.setBounds(0, 0,
+				(int) (5 * singleObjectDimension.getWidth()
+						+ 8 * singleSpacerDimension.getWidth()),
+				(int) (8 * singleObjectDimension.getHeight()
+						+ 11 * singleSpacerDimension.getHeight()));
+
 		mainTab = new JTabbedPane();
 		mainTab.setVisible(true);
-		
 		mainTab.setLocation(0, 0);
 		mainTab.setBounds(0, 0,
-				(int) (5 * singleObjectDimension.getWidth()
-						+ 6 * singleSpacerDimension.getWidth()),
-				(int) (8 * singleObjectDimension.getHeight()
-						+ 10 * singleSpacerDimension.getHeight()));
+				(int) (mainFrame.getWidth()),
+				(int) (mainFrame.getHeight()));
 		
 		picturePanel = new JPanel();
 		picturePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -305,10 +302,8 @@ public class PictureTravelSuiteClass extends JPanel
 		travelPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		travelPanel.setLocation(0, 0);
 		travelPanel.setBounds(0, 0,
-				(int) (5 * singleObjectDimension.getWidth()
-						+ 6 * singleSpacerDimension.getWidth()),
-				(int) (8 * singleObjectDimension.getHeight()
-						+ 8 * singleSpacerDimension.getHeight()));
+				(int) (picturePanel.getWidth()),
+				(int) (picturePanel.getHeight()));
 		travelPanel.setLayout(null);
 		
 		Action details = fileChooser.getActionMap().get("viewTypeDetails");
@@ -352,15 +347,15 @@ public class PictureTravelSuiteClass extends JPanel
 		picture_folderOutputText.setEditable(false);
 		picture_folderOutputText.setColumns(26);
 
-		selectOutputFolderBtn = new JButton("Select");
-		selectOutputFolderBtn.setActionCommand("folder");
-		selectOutputFolderBtn.addActionListener(this);
-		selectOutputFolderBtn.setLocation(
+		picture_selectOutputFolderBtn = new JButton("Select");
+		picture_selectOutputFolderBtn.setActionCommand("folder");
+		picture_selectOutputFolderBtn.addActionListener(this);
+		picture_selectOutputFolderBtn.setLocation(
 				(int) (picture_foldersPanel.getSize().getWidth()
 						- singleObjectDimension.getWidth()),
 				(int) (singleObjectDimension.getHeight()
 						+ singleSpacerDimension.getHeight()));
-		selectOutputFolderBtn.setEnabled(false);
+		picture_selectOutputFolderBtn.setEnabled(false);
 
 		picture_folderInputText.setSize(
 				(int) (4 * singleObjectDimension.getWidth()
@@ -380,13 +375,13 @@ public class PictureTravelSuiteClass extends JPanel
 				(int) (4 * singleObjectDimension.getWidth()
 						+ 3 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight()));
-		selectOutputFolderBtn.setSize(singleObjectDimension);
-		selectOutputFolderBtn.setMaximumSize(singleObjectDimension);
+		picture_selectOutputFolderBtn.setSize(singleObjectDimension);
+		picture_selectOutputFolderBtn.setMaximumSize(singleObjectDimension);
 
 		picture_foldersPanel.add(picture_folderInputText);
 		picture_foldersPanel.add(picture_selectInputFolderBtn);
 		picture_foldersPanel.add(picture_folderOutputText);
-		picture_foldersPanel.add(selectOutputFolderBtn);
+		picture_foldersPanel.add(picture_selectOutputFolderBtn);
 
 		picture_controlsPanel = new JPanel();
 		picture_controlsPanel.setBounds((int) (picture_foldersPanel.getLocation().x),
@@ -917,10 +912,12 @@ public class PictureTravelSuiteClass extends JPanel
 		
 		mainFrame.setSize(
 				(int) (bottomPanel.getLocation().x + bottomPanel.getSize().getWidth()
-						+ 2 * singleSpacerDimension.getWidth()),
+						+ 3 * singleSpacerDimension.getWidth()),
 				(int) (bottomPanel.getLocation().y + bottomPanel.getSize().getHeight()
 						+ 4 * singleSpacerDimension.getHeight()));
-
+		
+		mainTab.setSize((int) (picturePanel.getWidth()),
+				(int) (picturePanel.getHeight() + 32));
 
 		mainTab.addTab("Picture", picturePanel);
 		mainTab.addTab("Travel", travelPanel);
@@ -1946,7 +1943,7 @@ public class PictureTravelSuiteClass extends JPanel
 		saveBtn.setEnabled(enabled);
 		picture_cancelBtn.setEnabled(!enabled);
 		picture_selectInputFolderBtn.setEnabled(enabled);
-		selectOutputFolderBtn.setEnabled(enabled);
+		picture_selectOutputFolderBtn.setEnabled(enabled);
 
 		picture_colorProfileChckbx.setEnabled(enabled);
 		picture_watermarkChckbx.setEnabled(enabled);
@@ -1999,18 +1996,17 @@ public class PictureTravelSuiteClass extends JPanel
 				break;
 			case "folder":
 				if (evt.getSource() == picture_selectInputFolderBtn) {
-					if (fileChooser.showOpenDialog(
-							mainFrame) == JFileChooser.APPROVE_OPTION) {
+					if (fileChooser.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
 						picture_folderInput = fileChooser.getSelectedFile();
 						picture_folderOutput = picture_folderInput;
 						picture_folderInputText.setText(picture_folderInput.toString());
 						picture_startBtn.setEnabled(true);
-						selectOutputFolderBtn.setEnabled(true);
+						picture_selectOutputFolderBtn.setEnabled(true);
 					} else {
 						addToLog("Source folder not selected.", false);
 					}
 				}
-				if (evt.getSource() == selectOutputFolderBtn) {
+				if (evt.getSource() == picture_selectOutputFolderBtn) {
 					if (fileChooser.showOpenDialog(
 							mainFrame) == JFileChooser.APPROVE_OPTION) {
 						picture_folderOutput = fileChooser.getSelectedFile();
