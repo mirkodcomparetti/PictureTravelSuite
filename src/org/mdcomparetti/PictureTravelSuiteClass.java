@@ -1717,7 +1717,7 @@ public class PictureTravelSuiteClass extends JPanel
 				"-XMP-iptcExt:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture",*/
 				"-XMP-dc:Rights=" + copyright, "-XMP-xmpRights:Marked=True",
 				"-CopyrightFlag=True",
-				"-XMP-xmpRights:UsageTerms=This picture and it's metadata cannot be used and modified without permission. Every use must be explicitly authorized by the author. Any violations will be persecuted according to laws.",
+				"-XMP-xmpRights:UsageTerms=This picture and its metadata cannot be used and modified without permission. Every use must be explicitly authorized by the author. Any violations will be persecuted according to laws.",
 				"-overwrite_original"};
 		executeCommand(command);
 	}
