@@ -1,4 +1,4 @@
-package org.mdcomparetti;
+﻿package org.mdcomparetti;
 
 import java.awt.EventQueue;
 import java.awt.Toolkit;
@@ -197,9 +197,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public PictureTravelSuiteClass() {
 		initialize();
 		tmpFolderPath = System.getProperty("java.io.tmpdir");
@@ -266,8 +263,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		this.isRunning = false;
 
 		mainFrame = new JFrame();
-		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				PictureTravelSuiteClass.class.getResource("/org/mdcomparetti/resources/icona_tricolore.png")));
+		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/org/mdcomparetti/resources/icona_tricolore.png")));
 		mainFrame.setTitle(softwareInfoTitle);
 		mainFrame.addWindowListener(new WindowEventHandler());
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -907,9 +903,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			}
 		}
 		OsDetector OSrelated = new OsDetector();
-		/*
-		 * String[] separated = pathvar .split(OSrelated.getPathSeparator());
-		 */
 		List<String> separated = Arrays.asList(pathvar.split(OSrelated.getPathSeparator()));
 		File cmdFile;
 		cmdFile = searchProgram("exiftool", separated, OSrelated);
@@ -925,7 +918,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					new String[] { cmdExecutables.get("convert").toString(), "-version" });
 			addToLog("Found convert version " + versionNumber.substring(
 					versionNumber.indexOf("ImageMagick ") + ((String) "ImageMagick ").length(),
-					versionNumber.indexOf(" http://")));
+					versionNumber.indexOf(" http")));
 		}
 
 		cmdFile = searchProgram("gpsbabel", separated, OSrelated);
