@@ -21,7 +21,6 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.Action;
@@ -69,10 +69,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	private static final long serialSubVersionUID = 0L;
 	private static final String softwareAuthor = "Mirko D. Comparetti";
 	private static final String softwareAuthorShort = "MDC";
-	private static final String copyrightSymbol = "\u00a9";
+	private static final String copyrightSymbol = "©";
 	private static final String softwareNameShort = "PictureTravelSuite";
 	private static final String softwareName = "Picture Travel Suite";
-	private static final String softwareInfo = softwareAuthor + " - " + softwareName + " " + serialVersionUID + "."
+	private static final String softwareInfo = "MDC - " + softwareName + " " + serialVersionUID + "."
 			+ serialSubVersionUID;
 	private static final String softwareInfoLabel = copyrightSymbol + " " + softwareAuthor + " - - - " + softwareName
 			+ " " + serialVersionUID + "." + serialSubVersionUID;
@@ -263,7 +263,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_folderOutput = null;
 		travel_fileInput = null;
 		travel_fileOutput = null;
-		isRunning = false;
+		this.isRunning = false;
 
 		mainFrame = new JFrame();
 		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(
@@ -271,10 +271,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		mainFrame.setTitle(softwareInfoTitle);
 		mainFrame.addWindowListener(new WindowEventHandler());
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		// mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.getContentPane().setLayout(null);
 		mainFrame.setResizable(false);
-		// mainFrame.setLocationRelativeTo(null);
 		mainFrame.setLocationByPlatform(true);
 		mainFrame.setLocation(0, 0);
 		mainFrame.setBounds(0, 0, (int) (5 * singleObjectDimension.getWidth() + 8 * singleSpacerDimension.getWidth()),
@@ -427,8 +425,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				(int) (3 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())
 						- singleSpacerDimension.getHeight())));
 		picture_miscPanel.setLayout(null);
-		// picture_miscPanel.setBorder(new TitledBorder(null, "Vari",
-		// TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
 		picture_commentChckbx = new JCheckBox("Info");
 		picture_commentChckbx.setToolTipText("Adds info about the file in the EXIF comments");
@@ -745,7 +741,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_commandsPanel.add(picture_resizePanel);
 
 		logText = new MyJTextArea();
-		// logText.setColumns(5);
 		logText.setMargin(new Insets(5, 5, 5, 5));
 		logText.setLocation(0, 0);
 		logText.setSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
@@ -755,8 +750,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		logText.setMaximumSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
 				(int) (15 * singleObjectDimension.getHeight())));
 		logText.setEditable(false);
-		// logText.setLineWrap(true);
-		// logText.setWrapStyleWord(true);
 		logText.setTopInsertion(false);
 
 		progressPanel = new JPanel();
@@ -766,7 +759,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		progressPanel.setMaximumSize(
 				new Dimension((int) mainTab.getSize().getWidth(), (int) (singleObjectDimension.getHeight())));
 		mainFrame.getContentPane().add(progressPanel);
-		// progressPanel.setLayout(new BoxLayout(progressPanel, BoxLayout.X_AXIS));
 		progressPanel.setLayout(null);
 
 		progressBarProcess = new JProgressBar(0, 100);
@@ -798,7 +790,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		exitBtn.setLocation((int) (4 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())), 0);
 		progressPanel.add(progressBarProcess);
 		progressPanel.add(saveBtn);
-		// progressPanel.add(Box.createHorizontalGlue());
 		progressPanel.add(exitBtn);
 
 		bottomPanel = new JPanel();
@@ -837,7 +828,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				(int) (5 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())
 						- singleSpacerDimension.getWidth()),
 				(int) (2 * singleObjectDimension.getHeight() + singleSpacerDimension.getHeight()));
-		// travelPanel.add(travel_filesPanel);
+		travelPanel.add(travel_filesPanel);
 		travel_filesPanel.setLayout(null);
 
 		travel_fileInputText = new JTextField();
@@ -936,14 +927,15 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					versionNumber.indexOf("ImageMagick ") + ((String) "ImageMagick ").length(),
 					versionNumber.indexOf(" http://")));
 		}
-		/*
-		 * cmdFile = searchProgram("gpsbabel", separated, OSrelated); if (cmdFile !=
-		 * null) { cmdExecutables.put("gpsbabel", cmdFile); String versionNumber =
-		 * executeCommand(new String[]{cmdExecutables.get("gpsbabel").toString(),
-		 * "-V"}); addToLog("Found gpsbabel version " +
-		 * versionNumber.substring(versionNumber.indexOf("GPSBabel Version ") +
-		 * ((String) "GPSBabel Version ").length())); }
-		 */
+
+		cmdFile = searchProgram("gpsbabel", separated, OSrelated);
+		if (cmdFile != null) {
+			cmdExecutables.put("gpsbabel", cmdFile);
+			String versionNumber = executeCommand(new String[] { cmdExecutables.get("gpsbabel").toString(), "-V" });
+			addToLog("Found gpsbabel version " + versionNumber
+					.substring(versionNumber.indexOf("GPSBabel Version ") + ((String) "GPSBabel Version ").length()));
+		}
+
 	}
 
 	private File searchProgram(String searchString, List<String> separated, OsDetector OS) {
@@ -969,10 +961,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 						break;
 					}
 					break;
-				/*
-				 * case "gpsbabel": if (executeCommand( new String[]{testFile.toString(), "-V"})
-				 * .contains("GPSBabel")) return testFile; break;
-				 */
+				case "gpsbabel":
+					if (executeCommand(new String[] { testFile.toString(), "-V" }).contains("GPSBabel"))
+						return testFile;
+					break;
 				default:
 					break;
 				}
@@ -1104,51 +1096,33 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		return ((f > g) ? g : f);
 	}
 
-	private FilenameFilter selectFilefilter(String extension, boolean caseSensitive) {
-		System.out.println(extension);
-		return new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				String searchName = caseSensitive ? name : name.toLowerCase();
-				return searchName.endsWith("." + extension);
-			}
-		};
+	private Optional<String> getExtension(String filename) {
+		return Optional.ofNullable(filename).filter(f -> f.contains("."))
+				.map(f -> f.substring(filename.lastIndexOf(".") + 1));
 	}
 
-	private File[] SelectFiles(List<String> allowedExtensions, boolean caseSensitive) {
-		System.out.println("SelectFiles");
-		System.out.println(this.picture_folderInput.toString());
-
-		/*File[] listOfFiles = this.picture_folderInput.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return ((caseSensitive) ? name.endsWith("." + fileExtension)
-						: name.toLowerCase().endsWith("." + fileExtension));
-			}
-		});*/
-
-		File[] listOfFiles = null;
-		for(String selectedExtension : allowedExtensions) {
-			listOfFiles = this.picture_folderInput.listFiles(selectFilefilter(selectedExtension, caseSensitive));
-			System.out.println(java.util.Arrays.toString(listOfFiles));
+	private List<File> filterFilesExtension(File[] listOfFiles, List<String> allowedExtensions, boolean caseSensitive) {
+		List<File> fileList = new ArrayList<File>();
+		String extension;
+		for (File selectedFile : listOfFiles) {
+			extension = "." + getExtension(selectedFile.toString()).get();
+			extension = caseSensitive ? extension : extension.toLowerCase();
+			if (allowedExtensions.contains(extension))
+				fileList.add(selectedFile);
+			else
+				System.out.println("NotAdded");
 		}
-
-		// return this.picture_folderInput.listFiles(new ExtensionsFilter((String[])
-		// allowedExtensions.toArray()));
-
-		System.out.println(java.util.Arrays.toString(listOfFiles));
-		System.out.println("End");
-		return listOfFiles;
+		System.out.println(fileList.toString());
+		return fileList;
 	}
 
-	private File[] SelectFiles(List<String> allowedExtensions) {
+	private List<File> SelectFiles(List<String> allowedExtensions, boolean caseSensitive) {
+		return filterFilesExtension(this.picture_folderInput.listFiles(), allowedExtensions, caseSensitive);
+	}
+
+	private List<File> SelectFiles(List<String> allowedExtensions) {
 		return SelectFiles(allowedExtensions, false);
 	}
-
-	/*
-	 * private String[] FilesToString(File[] fileList) { String[] filesToProcess =
-	 * new String[fileList.length]; for (int iter = 0; iter < fileList.length;
-	 * iter++) { if (fileList[iter].isFile()) { filesToProcess[iter] =
-	 * fileList[iter].getName(); } } return filesToProcess; }
-	 */
 
 	private String[] FilesToString(List<File> fileList) {
 		String[] filesToProcess = new String[fileList.size()];
@@ -1294,7 +1268,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void WatermarkCommand(String workingFile, Point offsetCorner) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return;
 		addToLog("Adding watermark to " + workingFile, false);
 
@@ -1350,7 +1324,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void ResizeCommand(String workingFile) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return;
 		addToLog("Changing dimensions of " + workingFile);
 
@@ -1389,7 +1363,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private Point FrameCommand(String workingFile) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return null;
 		addToLog("Adding frame to " + workingFile);
 
@@ -1439,7 +1413,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private Point FrameCommand(String workingFile, String mode, float size, String color) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return new Point(0, 0);
 
 		String[] command;
@@ -1497,7 +1471,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void ColorProfileCommand(String workingFile) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return;
 		addToLog("Changing color profile to " + workingFile);
 
@@ -1514,7 +1488,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void UpdateCommentExif(String workingFile) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return;
 		addToLog("Updating EXIF info for " + workingFile);
 
@@ -1527,7 +1501,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void UpdateCopyrightExif(String workingFile) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return;
 		addToLog("Updating copyright info for " + workingFile);
 
@@ -1545,18 +1519,15 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				picture_folderOutput + File.separator + workingFile, "-artist=" + picture_photographerText.getText(),
 				"-creator=" + picture_photographerText.getText(), "-xpauthor=" + picture_photographerText.getText(),
 				"-copyright=" + copyrightSymbol + " " + copyright, "-ownername=" + picture_photographerText.getText(),
-				/*
-				 * "-PropertyReleaseStatus='PR-NON'",
-				 * "-XMP-iptcExt:DigitalSourceType=http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture",
-				 */
-				"-XMP-dc:Rights=" + copyright, "-XMP-xmpRights:Marked=True", "-CopyrightFlag=True",
+				"-XMP-dc:Rights=" + copyright, "-XMP-xmpRights:Marked=True",
+				"-CopyrightFlag=True",
 				"-XMP-xmpRights:UsageTerms=This picture and its metadata cannot be used and modified without permission. Every use must be explicitly authorized by the author. Any violations will be persecuted according to laws.",
 				"-overwrite_original" };
 		executeCommand(command);
 	}
 
 	private void CleanExifCommand(String workingFile) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return;
 		addToLog("Removing private EXIF info of " + workingFile);
 
@@ -1567,7 +1538,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void AddSoftwareEditor(String workingFile) {
-		if (!isRunning)
+		if (!this.isRunning)
 			return;
 		addToLog("Adding software info on " + workingFile);
 
@@ -1613,9 +1584,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	class MyJTextArea extends JTextArea {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = -1607704083480562163L;
 
 		private boolean topInsert = false;
@@ -1692,9 +1660,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	class Task extends SwingWorker<Void, Void> {
-		/*
-		 * Main task. Executed in background thread.
-		 */
 		public Void doInBackground() {
 			setProgress(progressBarProcess.getMinimum());
 			progressBarProcess.setValue(progressBarProcess.getMinimum());
@@ -1714,21 +1679,21 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 			List<String> allowedExtensions = Arrays.asList(new String[] { ".jpg", ".jpeg", ".tif", ".tiff", ".png" });
 			Collections.sort(allowedExtensions);
-			File[] listOfFiles = SelectFiles(allowedExtensions);
+			List<File> listOfFiles = SelectFiles(allowedExtensions);
 			String tmpStr = "";
-			for (int iter = 0; iter < allowedExtensions.size(); iter++) {
-				tmpStr += allowedExtensions.get(iter);
-				tmpStr = (iter == allowedExtensions.size()) ? tmpStr : tmpStr + ", ";
+			for (String iterExt : allowedExtensions) {
+				tmpStr += iterExt + ", ";
 			}
+			tmpStr.substring(0, tmpStr.length() - 2);
 			addToLog("Processing files with extensions: " + tmpStr);
 
 			if (picture_folderInput != picture_folderOutput) {
-				addToLog("Start, copy of files from source to target", false);
+				addToLog("Copying files from source to target", false);
 				try {
-					for (int iter = 0; (iter < listOfFiles.length && isRunning); iter++) {
-						if (listOfFiles[iter].isFile()) {
-							Files.copy(listOfFiles[iter].toPath(), new File(
-									picture_folderOutput.toString() + File.separator + listOfFiles[iter].getName())
+					for (File selectFile : listOfFiles) {
+						if (selectFile.isFile() && isRunning) {
+							Files.copy(selectFile.toPath(),
+									new File(picture_folderOutput.toString() + File.separator + selectFile.getName())
 											.toPath(),
 									REPLACE_EXISTING);
 						}
@@ -1740,23 +1705,23 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				addToLog("End, copy of files from source to target", false);
 			}
 
-			int numThreads = ((listOfFiles.length > numProcessors) ? numProcessors : listOfFiles.length);
+			int numThreads = ((listOfFiles.size() > numProcessors) ? numProcessors : listOfFiles.size());
 
 			addToLog("Process using " + numThreads + " threads.");
 
 			List<RunnableActions> processThreads = new ArrayList<RunnableActions>(numThreads);
 			List<List<File>> filePerThread = new ArrayList<List<File>>(numThreads);
 
-			int quotientThread = listOfFiles.length / numThreads;
-			int remainderThread = listOfFiles.length % numThreads;
+			int quotientThread = listOfFiles.size() / numThreads;
+			int remainderThread = listOfFiles.size() % numThreads;
 
 			for (int threadIterator = 0; threadIterator < numThreads; threadIterator++) {
 				filePerThread.add(threadIterator,
 						new ArrayList<File>(quotientThread + ((threadIterator >= remainderThread) ? 0 : 1)));
 				for (int fileIterator = 0; fileIterator < (quotientThread
 						+ ((threadIterator >= remainderThread) ? 0 : 1)); fileIterator++) {
-					filePerThread.get(threadIterator).add(fileIterator, listOfFiles[threadIterator * quotientThread
-							+ fileIterator + ((threadIterator >= remainderThread) ? remainderThread : threadIterator)]);
+					filePerThread.get(threadIterator).add(fileIterator, listOfFiles.get(threadIterator * quotientThread
+							+ fileIterator + ((threadIterator >= remainderThread) ? remainderThread : threadIterator)));
 				}
 				processThreads.add(threadIterator, new RunnableActions(filePerThread.get(threadIterator)));
 			}
@@ -1769,14 +1734,14 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			while (isAThreadAlive(processThreads)) {
 				try {
 					Thread.sleep(10);
-					setProgress((int) (((float) (numFilesProcessed(processThreads))) / ((float) (listOfFiles.length))
+					setProgress((int) (((float) (numFilesProcessed(processThreads))) / ((float) (listOfFiles.size()))
 							* 100f));
 				} catch (InterruptedException ex) {
 					Thread.currentThread().interrupt();
 				}
 			}
 
-			if (isRunning && (numFilesProcessed(processThreads) == listOfFiles.length)) {
+			if (isRunning && (numFilesProcessed(processThreads) == listOfFiles.size())) {
 				setProgress(progressBarProcess.getMaximum());
 			}
 			if (!isRunning) {
@@ -1786,9 +1751,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			return null;
 		}
 
-		/*
-		 * Executed in event dispatch thread
-		 */
 		public void done() {
 			if (isRunning)
 				Toolkit.getDefaultToolkit().beep();
@@ -1862,12 +1824,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			ResetConfigProps(false);
 			CommandsEnable(false);
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			// Instances of javax.swing.SwingWorker are not reusuable, so
-			// we create new instances as needed.
 			Task currentTask = new Task();
 			progressTask = currentTask;
 			currentTask.addPropertyChangeListener((PropertyChangeListener) this);
-			isRunning = true;
+			this.isRunning = true;
 			currentTask.execute();
 			break;
 		case "exit":
@@ -1875,7 +1835,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			System.exit(0);
 			break;
 		case "stop":
-			isRunning = false;
+			this.isRunning = false;
 			progressTask.cancel(false);
 			break;
 		case "save":
@@ -1980,7 +1940,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 			Path pathToFile = Paths.get(jarFolderResource);
 			Files.createDirectories(pathToFile.getParent());
-			// Files.createFile(pathToFile);
 
 			if (new File(jarFolderResource).exists())
 				return jarFolderResource;
