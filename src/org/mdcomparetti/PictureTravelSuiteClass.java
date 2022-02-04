@@ -263,7 +263,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		this.isRunning = false;
 
 		mainFrame = new JFrame();
-		mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/org/mdcomparetti/resources/icona_tricolore.png")));
+		mainFrame.setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(getClass().getResource("/org/mdcomparetti/resources/icona_tricolore.png")));
 		mainFrame.setTitle(softwareInfoTitle);
 		mainFrame.addWindowListener(new WindowEventHandler());
 		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -933,6 +934,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	private File searchProgram(String searchString, List<String> separated, OsDetector OS) {
 		File testFile;
+
 		for (String singlePath : separated) {
 			singlePath = singlePath.trim();
 			singlePath += File.separator;
@@ -1105,7 +1107,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			else
 				System.out.println("NotAdded");
 		}
-		System.out.println(fileList.toString());
 		return fileList;
 	}
 
@@ -1512,8 +1513,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				picture_folderOutput + File.separator + workingFile, "-artist=" + picture_photographerText.getText(),
 				"-creator=" + picture_photographerText.getText(), "-xpauthor=" + picture_photographerText.getText(),
 				"-copyright=" + copyrightSymbol + " " + copyright, "-ownername=" + picture_photographerText.getText(),
-				"-XMP-dc:Rights=" + copyright, "-XMP-xmpRights:Marked=True",
-				"-CopyrightFlag=True",
+				"-XMP-dc:Rights=" + copyright, "-XMP-xmpRights:Marked=True", "-CopyrightFlag=True",
 				"-XMP-xmpRights:UsageTerms=This picture and its metadata cannot be used and modified without permission. Every use must be explicitly authorized by the author. Any violations will be persecuted according to laws.",
 				"-overwrite_original" };
 		executeCommand(command);
