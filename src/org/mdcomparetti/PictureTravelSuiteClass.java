@@ -52,6 +52,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -65,7 +67,7 @@ import javax.swing.JLabel;
 
 public class PictureTravelSuiteClass extends JPanel implements ActionListener, PropertyChangeListener {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	private static final long serialSubVersionUID = 0L;
 	private static final String softwareAuthor = "Mirko D. Comparetti";
 	private static final String softwareAuthorShort = "MDC";
@@ -93,8 +95,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	private JPanel picture_controlsPanel;
 	private JTextField picture_photographerText;
-	private JButton picture_startBtn;
-	private JButton picture_cancelBtn;
+	private JButton startBtn;
+	private JButton cancelBtn;
 
 	private JPanel picture_foldersPanel;
 	private File picture_folderInput;
@@ -215,16 +217,16 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			addToLog("ERROR: ImageMagick not found", Color.RED);
 			OnlyExit();
 		}
-		/*
-		 * if (!cmdExecutables.containsKey("gpsbabel")) {
-		 * addToLog("ERROR: GPSbabel not found", Color.RED); OnlyExit(); }
-		 */
+		if (!cmdExecutables.containsKey("gpsbabel")) {
+			addToLog("ERROR: GPSbabel not found", Color.RED);
+			OnlyExit();
+		}
 	}
 
 	private void OnlyExit() {
 		exitBtn.setEnabled(true);
-		picture_startBtn.setEnabled(false);
-		picture_cancelBtn.setEnabled(false);
+		startBtn.setEnabled(false);
+		cancelBtn.setEnabled(false);
 		picture_selectInputFolderBtn.setEnabled(false);
 		picture_selectOutputFolderBtn.setEnabled(false);
 		saveBtn.setEnabled(false);
@@ -375,34 +377,14 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_photographerText = new JTextField();
 		picture_photographerText.setColumns(20);
 
-		picture_startBtn = new JButton("Start");
-		picture_startBtn.setActionCommand("start");
-		picture_startBtn.addActionListener(this);
-		picture_startBtn.setEnabled(false);
-
-		picture_cancelBtn = new JButton("Stop");
-		picture_cancelBtn.setActionCommand("stop");
-		picture_cancelBtn.addActionListener(this);
-		picture_cancelBtn.setEnabled(false);
-
 		picture_photographerText.setSize(
-				(int) (3 * singleObjectDimension.getWidth() + 2 * singleSpacerDimension.getWidth()),
+				(int) (5 * singleObjectDimension.getWidth() + 4 * singleSpacerDimension.getWidth()),
 				(int) singleObjectDimension.getHeight());
 		picture_photographerText.setMaximumSize(
-				new Dimension((int) (3 * singleObjectDimension.getWidth() + 2 * singleSpacerDimension.getWidth()),
+				new Dimension((int) (5 * singleObjectDimension.getWidth() + 4 * singleSpacerDimension.getWidth()),
 						(int) singleObjectDimension.getHeight()));
 		picture_photographerText.setLocation(0, 0);
-		picture_startBtn.setSize(singleObjectDimension);
-		picture_startBtn.setMaximumSize(singleObjectDimension);
-		picture_startBtn.setLocation((int) (3 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())),
-				0);
-		picture_cancelBtn.setSize(singleObjectDimension);
-		picture_cancelBtn.setMaximumSize(singleObjectDimension);
-		picture_cancelBtn.setLocation((int) (4 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())),
-				0);
 		picture_controlsPanel.add(picture_photographerText);
-		picture_controlsPanel.add(picture_startBtn);
-		picture_controlsPanel.add(picture_cancelBtn);
 
 		picture_commandsPanel = new JPanel();
 		picture_commandsPanel.setBounds((int) (picture_controlsPanel.getLocation().x),
@@ -739,7 +721,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		logText = new MyJTextArea();
 		logText.setMargin(new Insets(5, 5, 5, 5));
-		logText.setLocation(0, 0);
+		logText.setLocation((int) singleSpacerDimension.getWidth(), 0);
 		logText.setSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
 				(int) (15 * singleObjectDimension.getHeight())));
 		logText.setPreferredSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
@@ -763,6 +745,16 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		progressBarProcess.setValue(progressBarProcess.getMinimum());
 		progressBarProcess.setStringPainted(true);
 
+		startBtn = new JButton("Start");
+		startBtn.setActionCommand("start");
+		startBtn.addActionListener(this);
+		startBtn.setEnabled(false);
+
+		cancelBtn = new JButton("Stop");
+		cancelBtn.setActionCommand("stop");
+		cancelBtn.addActionListener(this);
+		cancelBtn.setEnabled(false);
+
 		saveBtn = new JButton("Save");
 		saveBtn.setActionCommand("save");
 		saveBtn.addActionListener(this);
@@ -772,20 +764,33 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		exitBtn.setActionCommand("exit");
 		exitBtn.addActionListener(this);
 
-		progressBarProcess.setSize(
-				new Dimension((int) (3 * singleObjectDimension.getWidth() + 2 * singleSpacerDimension.getWidth()),
-						(int) singleObjectDimension.getHeight()));
-		progressBarProcess.setMaximumSize(
-				new Dimension((int) (3 * singleObjectDimension.getWidth() + 2 * singleSpacerDimension.getWidth()),
-						(int) singleObjectDimension.getHeight()));
-		progressBarProcess.setLocation(0, 0);
+		progressBarProcess.setSize(singleObjectDimension);
+		progressBarProcess.setMaximumSize(singleObjectDimension);
+		progressBarProcess.setLocation((int) singleSpacerDimension.getWidth(), 0);
+
+		startBtn.setSize(singleObjectDimension);
+		startBtn.setMaximumSize(singleObjectDimension);
+		startBtn.setLocation((int) (3 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())
+				+ singleSpacerDimension.getWidth()), 0);
+		
+		cancelBtn.setSize(singleObjectDimension);
+		cancelBtn.setMaximumSize(singleObjectDimension);
+		cancelBtn.setLocation((int) (2 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())
+				+ singleSpacerDimension.getWidth()), 0);
+
 		saveBtn.setSize(singleObjectDimension);
 		saveBtn.setMaximumSize(singleObjectDimension);
-		saveBtn.setLocation((int) (3 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())), 0);
+		saveBtn.setLocation((int) ((singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())
+				+ singleSpacerDimension.getWidth()), 0);
+
 		exitBtn.setSize(singleObjectDimension);
 		exitBtn.setMaximumSize(singleObjectDimension);
-		exitBtn.setLocation((int) (4 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())), 0);
+		exitBtn.setLocation((int) (4 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())
+				+ singleSpacerDimension.getWidth()), 0);
+
 		progressPanel.add(progressBarProcess);
+		progressPanel.add(startBtn);
+		progressPanel.add(cancelBtn);
 		progressPanel.add(saveBtn);
 		progressPanel.add(exitBtn);
 
@@ -889,6 +894,23 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		mainTab.addTab("Picture", picturePanel);
 		mainTab.addTab("Travel", travelPanel);
+		mainTab.addChangeListener(new ChangeListener() {
+	        public void stateChanged(ChangeEvent e) {
+	            System.out.println("Tab: " + mainTab.getSelectedIndex());
+				startBtn.setEnabled(false);
+				// TODO: add logic to enable the start button based on context
+	            switch (mainTab.getSelectedIndex()) {
+				case 0: // Picture
+		            System.out.println("Picture");
+					break;
+				case 1: // Travel
+		            System.out.println("Travel");
+					break;
+				default:
+					break;
+				}
+	        }
+	    });
 		mainFrame.getContentPane().add(mainTab);
 		GetProgramPaths();
 	}
@@ -1654,88 +1676,101 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	class Task extends SwingWorker<Void, Void> {
 		public Void doInBackground() {
+			System.out.println(mainTab.getName() + "ID: " + mainTab.getSelectedIndex());
 			setProgress(progressBarProcess.getMinimum());
 			progressBarProcess.setValue(progressBarProcess.getMinimum());
 			addToLog("Process started.");
-			if (picture_folderInput == null) {
-				addToLog("ERROR: Select a source folder first!", Color.RED, false);
-				return null;
-			}
-			if (!(picture_watermarkChckbx.isSelected() || picture_resizeChckbx.isSelected()
-					|| picture_frameChckbx.isSelected() || picture_copyrightChckbx.isSelected()
-					|| picture_colorProfileChckbx.isSelected() || picture_cleanExifChckbx.isSelected()
-					|| picture_commentChckbx.isSelected())) {
-				System.out.println("No process selected");
-				addToLog("ERROR: No process selected.", Color.RED, false);
-				return null;
-			}
-
-			List<String> allowedExtensions = Arrays.asList(new String[] { ".jpg", ".jpeg", ".tif", ".tiff", ".png" });
-			Collections.sort(allowedExtensions);
-			List<File> listOfFiles = SelectFiles(allowedExtensions);
-			String tmpStr = "";
-			for (String iterExt : allowedExtensions) {
-				tmpStr += iterExt + ", ";
-			}
-			tmpStr.substring(0, tmpStr.length() - 2);
-			addToLog("Processing files with extensions: " + tmpStr);
-
-			if (picture_folderInput != picture_folderOutput) {
-				addToLog("Copying files from source to target", false);
-				try {
-					for (File selectFile : listOfFiles) {
-						if (selectFile.isFile() && isRunning) {
-							Files.copy(selectFile.toPath(),
-									new File(picture_folderOutput.toString() + File.separator + selectFile.getName())
-											.toPath(),
-									REPLACE_EXISTING);
-						}
-					}
-				} catch (IOException ex) {
-					addToLog(ex.getMessage());
+			switch (mainTab.getSelectedIndex()) {
+			case 0: // Picture
+				if (picture_folderInput == null) {
+					addToLog("ERROR: Select a source folder first!", Color.RED, false);
 					return null;
 				}
-				addToLog("End, copy of files from source to target", false);
-			}
-
-			int numThreads = ((listOfFiles.size() > numProcessors) ? numProcessors : listOfFiles.size());
-
-			addToLog("Process using " + numThreads + " threads.");
-
-			List<RunnableActions> processThreads = new ArrayList<RunnableActions>(numThreads);
-			List<List<File>> filePerThread = new ArrayList<List<File>>(numThreads);
-
-			int quotientThread = listOfFiles.size() / numThreads;
-			int remainderThread = listOfFiles.size() % numThreads;
-
-			for (int threadIterator = 0; threadIterator < numThreads; threadIterator++) {
-				filePerThread.add(threadIterator,
-						new ArrayList<File>(quotientThread + ((threadIterator >= remainderThread) ? 0 : 1)));
-				for (int fileIterator = 0; fileIterator < (quotientThread
-						+ ((threadIterator >= remainderThread) ? 0 : 1)); fileIterator++) {
-					filePerThread.get(threadIterator).add(fileIterator, listOfFiles.get(threadIterator * quotientThread
-							+ fileIterator + ((threadIterator >= remainderThread) ? remainderThread : threadIterator)));
+				if (!(picture_watermarkChckbx.isSelected() || picture_resizeChckbx.isSelected()
+						|| picture_frameChckbx.isSelected() || picture_copyrightChckbx.isSelected()
+						|| picture_colorProfileChckbx.isSelected() || picture_cleanExifChckbx.isSelected()
+						|| picture_commentChckbx.isSelected())) {
+					System.out.println("No process selected");
+					addToLog("ERROR: No process selected.", Color.RED, false);
+					return null;
 				}
-				processThreads.add(threadIterator, new RunnableActions(filePerThread.get(threadIterator)));
-			}
 
-			for (int threadIterator = 0; threadIterator < numThreads; threadIterator++) {
-				processThreads.get(threadIterator).setName("Thread-" + (threadIterator + 1));
-				processThreads.get(threadIterator).start();
-			}
-
-			while (isAThreadAlive(processThreads)) {
-				try {
-					Thread.sleep(10);
-					setProgress((int) (((float) (numFilesProcessed(processThreads))) / ((float) (listOfFiles.size()))
-							* 100f));
-				} catch (InterruptedException ex) {
-					Thread.currentThread().interrupt();
+				List<String> allowedExtensions = Arrays
+						.asList(new String[] { ".jpg", ".jpeg", ".tif", ".tiff", ".png" });
+				Collections.sort(allowedExtensions);
+				List<File> listOfFiles = SelectFiles(allowedExtensions);
+				String tmpStr = "";
+				for (String iterExt : allowedExtensions) {
+					tmpStr += iterExt + ", ";
 				}
-			}
+				tmpStr.substring(0, tmpStr.length() - 2);
+				addToLog("Processing files with extensions: " + tmpStr);
 
-			if (isRunning && (numFilesProcessed(processThreads) == listOfFiles.size())) {
-				setProgress(progressBarProcess.getMaximum());
+				if (picture_folderInput != picture_folderOutput) {
+					addToLog("Copying files from source to target", false);
+					try {
+						for (File selectFile : listOfFiles) {
+							if (selectFile.isFile() && isRunning) {
+								Files.copy(selectFile.toPath(),
+										new File(
+												picture_folderOutput.toString() + File.separator + selectFile.getName())
+														.toPath(),
+										REPLACE_EXISTING);
+							}
+						}
+					} catch (IOException ex) {
+						addToLog(ex.getMessage());
+						return null;
+					}
+					addToLog("End, copy of files from source to target", false);
+				}
+
+				int numThreads = ((listOfFiles.size() > numProcessors) ? numProcessors : listOfFiles.size());
+
+				addToLog("Process using " + numThreads + " threads.");
+
+				List<RunnableActions> processThreads = new ArrayList<RunnableActions>(numThreads);
+				List<List<File>> filePerThread = new ArrayList<List<File>>(numThreads);
+
+				int quotientThread = listOfFiles.size() / numThreads;
+				int remainderThread = listOfFiles.size() % numThreads;
+
+				for (int threadIterator = 0; threadIterator < numThreads; threadIterator++) {
+					filePerThread.add(threadIterator,
+							new ArrayList<File>(quotientThread + ((threadIterator >= remainderThread) ? 0 : 1)));
+					for (int fileIterator = 0; fileIterator < (quotientThread
+							+ ((threadIterator >= remainderThread) ? 0 : 1)); fileIterator++) {
+						filePerThread.get(threadIterator).add(fileIterator,
+								listOfFiles.get(threadIterator * quotientThread + fileIterator
+										+ ((threadIterator >= remainderThread) ? remainderThread : threadIterator)));
+					}
+					processThreads.add(threadIterator, new RunnableActions(filePerThread.get(threadIterator)));
+				}
+
+				for (int threadIterator = 0; threadIterator < numThreads; threadIterator++) {
+					processThreads.get(threadIterator).setName("Thread-" + (threadIterator + 1));
+					processThreads.get(threadIterator).start();
+				}
+
+				while (isAThreadAlive(processThreads)) {
+					try {
+						Thread.sleep(10);
+						setProgress((int) (((float) (numFilesProcessed(processThreads)))
+								/ ((float) (listOfFiles.size())) * 100f));
+					} catch (InterruptedException ex) {
+						Thread.currentThread().interrupt();
+					}
+				}
+
+				if (isRunning && (numFilesProcessed(processThreads) == listOfFiles.size())) {
+					setProgress(progressBarProcess.getMaximum());
+				}
+				break;
+			case 1: // Travel
+
+				break;
+			default:
+				break;
 			}
 			if (!isRunning) {
 				setProgress(progressBarProcess.getMinimum());
@@ -1781,10 +1816,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void CommandsEnable(boolean enabled) {
-		picture_startBtn.setEnabled(enabled);
+		startBtn.setEnabled(enabled);
 		exitBtn.setEnabled(enabled);
 		saveBtn.setEnabled(enabled);
-		picture_cancelBtn.setEnabled(!enabled);
+		cancelBtn.setEnabled(!enabled);
 		picture_selectInputFolderBtn.setEnabled(enabled);
 		picture_selectOutputFolderBtn.setEnabled(enabled);
 
@@ -1840,7 +1875,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					picture_folderInput = picture_fileChooser.getSelectedFile();
 					picture_folderOutput = picture_folderInput;
 					picture_folderInputText.setText(picture_folderInput.toString());
-					picture_startBtn.setEnabled(true);
+					startBtn.setEnabled(true);
 					picture_selectOutputFolderBtn.setEnabled(true);
 				} else {
 					addToLog("Source folder not selected.", false);
@@ -1861,7 +1896,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					travel_fileInput = travel_fileChooser.getSelectedFile();
 					travel_fileOutput = travel_fileInput;
 					travel_fileInputText.setText(travel_fileInput.toString());
-					picture_startBtn.setEnabled(true);
+					startBtn.setEnabled(true);
 					travel_selectOutputFileBtn.setEnabled(true);
 				} else {
 					addToLog("Source file not selected.", false);
