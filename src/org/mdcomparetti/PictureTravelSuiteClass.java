@@ -1115,11 +1115,18 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	private List<File> filterFilesExtension(File[] listOfFiles, List<String> allowedExtensions, boolean caseSensitive) {
 		List<File> fileList = new ArrayList<File>();
+		List<String> extList = allowedExtensions;
+		if (caseSensitive) {
+			extList.clear();
+			for (String selectedExt : allowedExtensions) {
+				extList.add(selectedExt.toLowerCase());
+			}
+		}
 		String extension;
 		for (File selectedFile : listOfFiles) {
 			extension = "." + getExtension(selectedFile.toString()).get();
 			extension = caseSensitive ? extension : extension.toLowerCase();
-			if (allowedExtensions.contains(extension))
+			if (extList.contains(extension))
 				fileList.add(selectedFile);
 			else
 				System.out.println("NotAdded");
