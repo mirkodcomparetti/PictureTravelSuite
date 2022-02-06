@@ -1006,7 +1006,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_frameThickness.setSelectedItem(Float.parseFloat(configProps.getProperty("picture_frameThickness")));
 		picture_resizeChckbx.setSelected(configProps.getProperty("picture_resize").compareTo(configurationBoolean[0]) == 0);
 		picture_resizeEdge.setSelectedItem((String) (configProps.getProperty("picture_resizeEdge")));
-		picture_resizeValue.setSelectedItem((String) (configProps.getProperty("resizeSize")));
+		picture_resizeValue.setSelectedItem((String) (configProps.getProperty("picture_resizeSize")));
 		picture_resizeFullHDChckbx.setSelected(false);
 		picture_resizeUltraHDChckbx.setSelected(false);
 	}
