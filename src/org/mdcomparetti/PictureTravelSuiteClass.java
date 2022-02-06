@@ -207,26 +207,36 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		ColorProfileDataEnable(configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
 
 		if (!cmdExecutables.containsKey("exiftool")) {
+			System.out.println("ERROR: exiftool not found");
 			addToLog("ERROR: exiftool not found", Color.RED);
+			disablePicture();
 			OnlyExit();
 		}
 		if (!cmdExecutables.containsKey("convert")) {
+			System.out.println("ERROR: ImageMagick not found");
 			addToLog("ERROR: ImageMagick not found", Color.RED);
+			disablePicture();
 			OnlyExit();
 		}
 		if (!cmdExecutables.containsKey("gpsbabel")) {
+			System.out.println("ERROR: GPSbabel not found");
 			addToLog("ERROR: GPSbabel not found", Color.RED);
+			disableTravel();
 			OnlyExit();
 		}
 	}
 
 	private void OnlyExit() {
+		saveBtn.setEnabled(false);
 		exitBtn.setEnabled(true);
 		startBtn.setEnabled(false);
 		cancelBtn.setEnabled(false);
+	}
+
+	private void disablePicture() {
+		picturePanel.setEnabled(false);
 		picture_selectInputFolderBtn.setEnabled(false);
 		picture_selectOutputFolderBtn.setEnabled(false);
-		saveBtn.setEnabled(false);
 		picture_watermarkChckbx.setEnabled(false);
 		picture_resizeChckbx.setEnabled(false);
 		picture_frameChckbx.setEnabled(false);
@@ -239,7 +249,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		ResizeDataEnable(false);
 		FrameDataEnable(false);
 		ColorProfileDataEnable(false);
+	}
 
+	private void disableTravel() {
+		travelPanel.setEnabled(false);
 		travel_selectInputFileBtn.setEnabled(false);
 		travel_selectOutputFileBtn.setEnabled(false);
 	}
@@ -890,7 +903,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		mainTab.addTab("Travel", travelPanel);
 		mainTab.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				System.out.println("Tab: " + mainTab.getSelectedIndex());
 				startBtn.setEnabled(false);
 				switch (mainTab.getSelectedIndex()) {
 				case 0: // Picture
@@ -989,26 +1001,32 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_photographerText.setText(configProps.getProperty("picture_author"));
 		picture_copyrightChckbx
 				.setSelected(configProps.getProperty("picture_copyright").compareTo(configurationBoolean[0]) == 0);
-		picture_commentChckbx.setSelected(configProps.getProperty("picture_info").compareTo(configurationBoolean[0]) == 0);
+		picture_commentChckbx
+				.setSelected(configProps.getProperty("picture_info").compareTo(configurationBoolean[0]) == 0);
 		picture_colorProfileChckbx
 				.setSelected(configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
-		picture_cleanExifChckbx.setSelected(configProps.getProperty("picture_noexif").compareTo(configurationBoolean[0]) == 0);
+		picture_cleanExifChckbx
+				.setSelected(configProps.getProperty("picture_noexif").compareTo(configurationBoolean[0]) == 0);
 		picture_colorProfileFile.setSelectedItem((String) configProps.getProperty("picture_cprofileFile"));
 		picture_watermarkChckbx
 				.setSelected(configProps.getProperty("picture_watermark").compareTo(configurationBoolean[0]) == 0);
 		picture_watermarkSize.setSelectedItem(Float.parseFloat(configProps.getProperty("picture_watermarkSize")));
 		picture_watermarkFont.setSelectedItem((String) (configProps.getProperty("picture_watermarkFont")));
 		picture_watermarkPosition.setSelectedItem((String) (configProps.getProperty("picture_watermarkPosition")));
-		picture_frameChckbx.setSelected(configProps.getProperty("picture_frame").compareTo(configurationBoolean[0]) == 0);
+		picture_frameChckbx
+				.setSelected(configProps.getProperty("picture_frame").compareTo(configurationBoolean[0]) == 0);
 		picture_frameColor.setSelectedItem((String) (configProps.getProperty("picture_frameColor")));
 		picture_frameType.setSelectedItem((String) (configProps.getProperty("picture_frameType")));
 		picture_frameSize.setSelectedItem(Float.parseFloat(configProps.getProperty("picture_frameSize")));
 		picture_frameThickness.setSelectedItem(Float.parseFloat(configProps.getProperty("picture_frameThickness")));
-		picture_resizeChckbx.setSelected(configProps.getProperty("picture_resize").compareTo(configurationBoolean[0]) == 0);
+		picture_resizeChckbx
+				.setSelected(configProps.getProperty("picture_resize").compareTo(configurationBoolean[0]) == 0);
 		picture_resizeEdge.setSelectedItem((String) (configProps.getProperty("picture_resizeEdge")));
 		picture_resizeValue.setSelectedItem((String) (configProps.getProperty("picture_resizeSize")));
-		picture_resizeFullHDChckbx.setSelected(configProps.getProperty("picture_resizeSizeFHD").compareTo(configurationBoolean[0]) == 0);
-		picture_resizeUltraHDChckbx.setSelected(configProps.getProperty("picture_resizeSizeUHD").compareTo(configurationBoolean[0]) == 0); 
+		picture_resizeFullHDChckbx
+				.setSelected(configProps.getProperty("picture_resizeSizeFHD").compareTo(configurationBoolean[0]) == 0);
+		picture_resizeUltraHDChckbx
+				.setSelected(configProps.getProperty("picture_resizeSizeUHD").compareTo(configurationBoolean[0]) == 0);
 	}
 
 	private void ResetConfigProps(boolean defaultValues) {
@@ -1291,7 +1309,18 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		return offset;
 	}
 
-	private void WatermarkCommand(String workingFile, Point offsetCorner) {
+	private ArrayList<Point> getCorners(Dimension imgSize, float size) {
+		// NorthWest
+		ArrayList<Point> corners = new ArrayList<Point>();
+		corners.add(new Point((int) Math.round(imgSize.getWidth() * size / 100.0),
+				(int) Math.round(imgSize.getHeight() * size / 100.0)));
+		// SouthEast
+		corners.add(new Point((int) Math.round(imgSize.getWidth() - corners.get(0).getX()),
+				(int) Math.round(imgSize.getHeight() - corners.get(0).getY())));
+		return corners;
+	}
+
+	private void command_PictureWatermark(String workingFile, Point offsetCorner) {
 		if (!this.isRunning)
 			return;
 		addToLog("Adding watermark to " + workingFile, false);
@@ -1347,7 +1376,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		}
 	}
 
-	private void ResizeCommand(String workingFile) {
+	private void command_PictureResize(String workingFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Changing dimensions of " + workingFile);
@@ -1386,7 +1415,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		executeCommand(command);
 	}
 
-	private Point FrameCommand(String workingFile) {
+	private Point command_PictureFrame(String workingFile) {
 		if (!this.isRunning)
 			return null;
 		addToLog("Adding frame to " + workingFile);
@@ -1399,17 +1428,17 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		switch (mode) {
 		case "Italy":
-			offset = FrameCommand(workingFile, "Plain", size, "red");
-			addPoint(offset, FrameCommand(workingFile, "Plain", size, "white"));
-			addPoint(offset, FrameCommand(workingFile, "Plain", size, "green"));
+			offset = command_PictureFrame(workingFile, "Plain", size, "red");
+			addPoint(offset, command_PictureFrame(workingFile, "Plain", size, "white"));
+			addPoint(offset, command_PictureFrame(workingFile, "Plain", size, "green"));
 			break;
 		case "Double":
-			offset = FrameCommand(workingFile, "Plain", (int) (0.75 * ((float) (size))), "white");
-			addPoint(offset, FrameCommand(workingFile, "Plain", size, "black"));
+			offset = command_PictureFrame(workingFile, "Plain", (int) (0.75 * ((float) (size))), "white");
+			addPoint(offset, command_PictureFrame(workingFile, "Plain", size, "black"));
 			break;
 		case "Outer":
-			offset = FrameCommand(workingFile, "Plain", size, "black");
-			FrameCommand(workingFile, "Inner", (int) Math.round(((float) (size)) / 1.5), "white");
+			offset = command_PictureFrame(workingFile, "Plain", size, "black");
+			command_PictureFrame(workingFile, "Inner", (int) Math.round(((float) (size)) / 1.5), "white");
 			break;
 		case "Blur":
 			ArrayList<Point> corners = getCorners(GetImageSize(workingFile, picture_folderOutput), size);
@@ -1423,12 +1452,12 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					"+" + Math.round(corners.get(0).x) + "+" + Math.round(corners.get(0).y), "-composite",
 					picture_folderOutput + File.separator + workingFile };
 			executeCommand(command);
-			offset = FrameCommand(workingFile, "Inner", size, color);
+			offset = command_PictureFrame(workingFile, "Inner", size, color);
 			break;
 		case "Inner":
 		case "Rounded":
 		case "Plain":
-			offset = FrameCommand(workingFile, mode, size, color);
+			offset = command_PictureFrame(workingFile, mode, size, color);
 			break;
 		default:
 			break;
@@ -1436,7 +1465,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		return offset;
 	}
 
-	private Point FrameCommand(String workingFile, String mode, float size, String color) {
+	private Point command_PictureFrame(String workingFile, String mode, float size, String color) {
 		if (!this.isRunning)
 			return new Point(0, 0);
 
@@ -1483,18 +1512,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		return corners.get(0);
 	}
 
-	private ArrayList<Point> getCorners(Dimension imgSize, float size) {
-		// NorthWest
-		ArrayList<Point> corners = new ArrayList<Point>();
-		corners.add(new Point((int) Math.round(imgSize.getWidth() * size / 100.0),
-				(int) Math.round(imgSize.getHeight() * size / 100.0)));
-		// SouthEast
-		corners.add(new Point((int) Math.round(imgSize.getWidth() - corners.get(0).getX()),
-				(int) Math.round(imgSize.getHeight() - corners.get(0).getY())));
-		return corners;
-	}
-
-	private void ColorProfileCommand(String workingFile) {
+	private void command_PictureColorProfile(String workingFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Changing color profile to " + workingFile);
@@ -1511,7 +1529,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		}
 	}
 
-	private void UpdateCommentExif(String workingFile) {
+	private void command_PictureUpdateCommentExif(String workingFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Updating EXIF info for " + workingFile);
@@ -1524,7 +1542,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		executeCommand(command);
 	}
 
-	private void UpdateCopyrightExif(String workingFile) {
+	private void command_PictureUpdateCopyrightExif(String workingFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Updating copyright info for " + workingFile);
@@ -1549,7 +1567,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		executeCommand(command);
 	}
 
-	private void CleanExifCommand(String workingFile) {
+	private void command_PictureCleanExif(String workingFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Removing private EXIF info of " + workingFile);
@@ -1560,7 +1578,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		executeCommand(command);
 	}
 
-	private void AddSoftwareEditor(String workingFile) {
+	private void command_PictureAddSoftwareEditor(String workingFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Adding software info on " + workingFile);
@@ -2093,20 +2111,20 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 					Point offsetCorner = new Point();
 					if (picture_colorProfileChckbx.isSelected())
-						ColorProfileCommand(filesToProcess[iter]);
+						command_PictureColorProfile(filesToProcess[iter]);
 					if (picture_frameChckbx.isSelected())
-						offsetCorner = FrameCommand(filesToProcess[iter]);
+						offsetCorner = command_PictureFrame(filesToProcess[iter]);
 					if (picture_watermarkChckbx.isSelected())
-						WatermarkCommand(filesToProcess[iter], offsetCorner);
+						command_PictureWatermark(filesToProcess[iter], offsetCorner);
 					if (picture_resizeChckbx.isSelected())
-						ResizeCommand(filesToProcess[iter]);
+						command_PictureResize(filesToProcess[iter]);
 					if (picture_cleanExifChckbx.isSelected())
-						CleanExifCommand(filesToProcess[iter]);
+						command_PictureCleanExif(filesToProcess[iter]);
 					if (picture_commentChckbx.isSelected())
-						UpdateCommentExif(filesToProcess[iter]);
+						command_PictureUpdateCommentExif(filesToProcess[iter]);
 					if (picture_copyrightChckbx.isSelected())
-						UpdateCopyrightExif(filesToProcess[iter]);
-					AddSoftwareEditor(filesToProcess[iter]);
+						command_PictureUpdateCopyrightExif(filesToProcess[iter]);
+					command_PictureAddSoftwareEditor(filesToProcess[iter]);
 
 					addToLog("Working on " + filesToProcess[iter] + " finished.", false);
 					numFilesProcessed = iter + 1;
