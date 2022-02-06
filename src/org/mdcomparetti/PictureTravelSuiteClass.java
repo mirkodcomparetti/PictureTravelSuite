@@ -434,7 +434,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		picture_colorProfileChckbx = new JCheckBox("Profile");
 		picture_colorProfileChckbx.setToolTipText("Changes the color profile for the pictures");
-		picture_colorProfileChckbx.setActionCommand("colorProfile");
+		picture_colorProfileChckbx.setActionCommand("picture_colorProfile");
 		picture_colorProfileChckbx.addActionListener(this);
 
 		picture_colorProfileFile = new JComboBox<String>();
@@ -486,7 +486,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		picture_frameChckbx = new JCheckBox("Frame");
 		picture_frameChckbx.setToolTipText("Adds a frame to the pictures");
-		picture_frameChckbx.setActionCommand("frame");
+		picture_frameChckbx.setActionCommand("picture_frame");
 		picture_frameChckbx.addActionListener(this);
 
 		picture_frameColor = new JComboBox<String>();
@@ -581,7 +581,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		picture_watermarkChckbx = new JCheckBox("Watermark");
 		picture_watermarkChckbx.setToolTipText("Add watermark to the pictures");
-		picture_watermarkChckbx.setActionCommand("watermark");
+		picture_watermarkChckbx.setActionCommand("picture_watermark");
 		picture_watermarkChckbx.addActionListener(this);
 
 		picture_watermarkSize = new JComboBox<Float>();
@@ -652,7 +652,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		picture_resizeChckbx = new JCheckBox("Resize");
 		picture_resizeChckbx.setToolTipText("Resize pictures");
-		picture_resizeChckbx.setActionCommand("resize");
+		picture_resizeChckbx.setActionCommand("picture_resize");
 		picture_resizeChckbx.addActionListener(this);
 
 		picture_resizeValueModel = new DefaultComboBoxModel<String>(new String[] { "1200", "1600", "2000", "2400" });
@@ -675,11 +675,11 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		picture_resizeFullHDChckbx = new JCheckBox("Full HD");
 		picture_resizeFullHDChckbx.setToolTipText("FullHD size");
-		picture_resizeFullHDChckbx.setActionCommand("fullhd");
+		picture_resizeFullHDChckbx.setActionCommand("picture_fullhd");
 		picture_resizeFullHDChckbx.addActionListener(this);
 		picture_resizeUltraHDChckbx = new JCheckBox("Ultra HD");
 		picture_resizeUltraHDChckbx.setToolTipText("Ultra HD 4k size");
-		picture_resizeUltraHDChckbx.setActionCommand("ultrahd");
+		picture_resizeUltraHDChckbx.setActionCommand("picture_ultrahd");
 		picture_resizeUltraHDChckbx.addActionListener(this);
 
 		picture_resizeChckbx.setSize(singleObjectDimension);
@@ -986,9 +986,9 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void GetConfigProps() {
-		picture_photographerText.setText(configProps.getProperty("author"));
+		picture_photographerText.setText(configProps.getProperty("picture_author"));
 		picture_copyrightChckbx
-				.setSelected(configProps.getProperty("copyright").compareTo(configurationBoolean[0]) == 0);
+				.setSelected(configProps.getProperty("picture_copyright").compareTo(configurationBoolean[0]) == 0);
 		picture_commentChckbx.setSelected(configProps.getProperty("picture_info").compareTo(configurationBoolean[0]) == 0);
 		picture_colorProfileChckbx
 				.setSelected(configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
@@ -1007,14 +1007,14 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_resizeChckbx.setSelected(configProps.getProperty("picture_resize").compareTo(configurationBoolean[0]) == 0);
 		picture_resizeEdge.setSelectedItem((String) (configProps.getProperty("picture_resizeEdge")));
 		picture_resizeValue.setSelectedItem((String) (configProps.getProperty("picture_resizeSize")));
-		picture_resizeFullHDChckbx.setSelected(false);
-		picture_resizeUltraHDChckbx.setSelected(false);
+		picture_resizeFullHDChckbx.setSelected(configProps.getProperty("picture_resizeSizeFHD").compareTo(configurationBoolean[0]) == 0);
+		picture_resizeUltraHDChckbx.setSelected(configProps.getProperty("picture_resizeSizeUHD").compareTo(configurationBoolean[0]) == 0); 
 	}
 
 	private void ResetConfigProps(boolean defaultValues) {
 		if (defaultValues) {
-			configPropsDefault.setProperty("author", "Mirko D. Comparetti");
-			configPropsDefault.setProperty("copyright", configurationBoolean[0]);
+			configPropsDefault.setProperty("picture_author", "Mirko D. Comparetti");
+			configPropsDefault.setProperty("picture_copyright", configurationBoolean[0]);
 			configPropsDefault.setProperty("picture_info", configurationBoolean[0]);
 			configPropsDefault.setProperty("picture_noexif", configurationBoolean[1]);
 			configPropsDefault.setProperty("picture_cprofile", configurationBoolean[0]);
@@ -1030,10 +1030,12 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configPropsDefault.setProperty("picture_watermarkPosition", "southeast");
 			configPropsDefault.setProperty("picture_resize", configurationBoolean[1]);
 			configPropsDefault.setProperty("picture_resizeEdge", "Long");
-			configPropsDefault.setProperty("picture_resizeSize", "1600");
+			configPropsDefault.setProperty("picture_resizeSize", "2000");
+			configPropsDefault.setProperty("picture_resizeSizeFHD", configurationBoolean[1]);
+			configPropsDefault.setProperty("picture_resizeSizeUHD", configurationBoolean[1]);
 		} else {
-			configProps.setProperty("author", picture_photographerText.getText());
-			configProps.setProperty("copyright",
+			configProps.setProperty("picture_author", picture_photographerText.getText());
+			configProps.setProperty("picture_copyright",
 					picture_copyrightChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("picture_info",
 					picture_commentChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
@@ -1042,7 +1044,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configProps.setProperty("picture_cprofile",
 					picture_colorProfileChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("picture_cprofileFile", (String) picture_colorProfileFile.getSelectedItem());
-			configProps.setProperty("frame",
+			configProps.setProperty("picture_frame",
 					picture_frameChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("picture_frameColor", (String) (picture_frameColor.getSelectedItem()));
 			configProps.setProperty("picture_frameType", (String) (picture_frameType.getSelectedItem()));
@@ -1058,6 +1060,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					picture_resizeChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("picture_resizeEdge", (String) (picture_resizeEdge.getSelectedItem()));
 			configProps.setProperty("picture_resizeSize", (String) picture_resizeValue.getSelectedItem());
+			configProps.setProperty("picture_resizeSizeFHD",
+					picture_resizeFullHDChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
+			configProps.setProperty("picture_resizeSizeUHD",
+					picture_resizeUltraHDChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 		}
 	}
 
@@ -1068,7 +1074,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configReader.close();
 
 		} catch (FileNotFoundException exRead) {
-			//addToLog("Configuration file not found, default values are saved", false);
+			System.out.println("Configuration file not found, default values are saved");
 			configProps = configPropsDefault;
 			SaveConfiguration(true);
 
@@ -1929,32 +1935,32 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				}
 			}
 			break;
-		case "colorProfile":
+		case "picture_colorProfile":
 			if (evt.getSource() == picture_colorProfileChckbx) {
 				ColorProfileDataEnable(picture_colorProfileChckbx.isSelected());
 			}
 			break;
-		case "watermark":
+		case "picture_watermark":
 			if (evt.getSource() == picture_watermarkChckbx) {
 				WatermarkDataEnable(picture_watermarkChckbx.isSelected());
 			}
 			break;
-		case "frame":
+		case "picture_frame":
 			if (evt.getSource() == picture_frameChckbx) {
 				FrameDataEnable(picture_frameChckbx.isSelected());
 			}
 			break;
-		case "resize":
+		case "picture_resize":
 			if (evt.getSource() == picture_resizeChckbx) {
 				ResizeDataEnable(picture_resizeChckbx.isSelected());
 			}
 			break;
-		case "fullhd":
+		case "picture_fullhd":
 			if (evt.getSource() == picture_resizeFullHDChckbx) {
 				ResizeCustomEnable(!picture_resizeFullHDChckbx.isSelected(), "ultrahd");
 			}
 			break;
-		case "ultrahd":
+		case "picture_ultrahd":
 			if (evt.getSource() == picture_resizeUltraHDChckbx) {
 				ResizeCustomEnable(!picture_resizeUltraHDChckbx.isSelected(), "fullhd");
 			}
