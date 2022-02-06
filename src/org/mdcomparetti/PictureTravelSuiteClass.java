@@ -177,9 +177,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	private String tmpFolderPath;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -247,9 +244,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_selectOutputFileBtn.setEnabled(false);
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		cmdExecutables = new HashMap<String, File>();
 		configFile = new File("PictureTravelSuite.cfg");
@@ -898,13 +892,14 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	        public void stateChanged(ChangeEvent e) {
 	            System.out.println("Tab: " + mainTab.getSelectedIndex());
 				startBtn.setEnabled(false);
-				// TODO: add logic to enable the start button based on context
 	            switch (mainTab.getSelectedIndex()) {
 				case 0: // Picture
-		            System.out.println("Picture");
+					if (picture_folderInput != null)
+						startBtn.setEnabled(true);
 					break;
 				case 1: // Travel
-		            System.out.println("Travel");
+					if (travel_fileInput != null)
+						startBtn.setEnabled(true);
 					break;
 				default:
 					break;
@@ -1676,22 +1671,13 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	class Task extends SwingWorker<Void, Void> {
 		public Void doInBackground() {
-			System.out.println(mainTab.getName() + "ID: " + mainTab.getSelectedIndex());
 			setProgress(progressBarProcess.getMinimum());
 			progressBarProcess.setValue(progressBarProcess.getMinimum());
 			addToLog("Process started.");
 			switch (mainTab.getSelectedIndex()) {
 			case 0: // Picture
-				if (picture_folderInput == null) {
-					addToLog("ERROR: Select a source folder first!", Color.RED, false);
-					return null;
-				}
-				if (!(picture_watermarkChckbx.isSelected() || picture_resizeChckbx.isSelected()
-						|| picture_frameChckbx.isSelected() || picture_copyrightChckbx.isSelected()
-						|| picture_colorProfileChckbx.isSelected() || picture_cleanExifChckbx.isSelected()
-						|| picture_commentChckbx.isSelected())) {
-					System.out.println("No process selected");
-					addToLog("ERROR: No process selected.", Color.RED, false);
+				if (!checkWorkPicture()) {
+					isRunning = false;
 					return null;
 				}
 
@@ -1767,7 +1753,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				}
 				break;
 			case 1: // Travel
-
+				if (!checkWorkTravel())
+					return null;
 				break;
 			default:
 				break;
@@ -1786,7 +1773,31 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			if (isRunning)
 				addToLog("Process executed successfully.", Color.GREEN);
 			else
-				addToLog("Processo executed with errors.", Color.BLUE);
+				addToLog("Process executed with errors.", Color.BLUE);
+		}
+
+		public boolean checkWorkPicture() {
+			if (picture_folderInput == null) {
+				addToLog("ERROR: Select a source folder first!", Color.RED, false);
+				return false;
+			}
+			if (!(picture_watermarkChckbx.isSelected() || picture_resizeChckbx.isSelected()
+					|| picture_frameChckbx.isSelected() || picture_copyrightChckbx.isSelected()
+					|| picture_colorProfileChckbx.isSelected() || picture_cleanExifChckbx.isSelected()
+					|| picture_commentChckbx.isSelected())) {
+				System.out.println("No process selected");
+				addToLog("ERROR: No process selected.", Color.RED, false);
+				return false;
+			}
+			return true;
+		}
+
+		public boolean checkWorkTravel() {
+			if (travel_fileInput == null) {
+				addToLog("ERROR: Select a source file first!", Color.RED, false);
+				return false;
+			}
+			return true;
 		}
 	}
 
