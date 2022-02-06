@@ -201,10 +201,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		tmpFolderPath = System.getProperty("java.io.tmpdir");
 		tmpFolderPath += softwareNameShort + "Tmp";
 		GetConfigProps();
-		WatermarkDataEnable(configProps.getProperty("watermark").compareTo(configurationBoolean[0]) == 0);
-		ResizeDataEnable(configProps.getProperty("resize").compareTo(configurationBoolean[0]) == 0);
-		FrameDataEnable(configProps.getProperty("frame").compareTo(configurationBoolean[0]) == 0);
-		ColorProfileDataEnable(configProps.getProperty("cprofile").compareTo(configurationBoolean[0]) == 0);
+		WatermarkDataEnable(configProps.getProperty("picture_watermark").compareTo(configurationBoolean[0]) == 0);
+		ResizeDataEnable(configProps.getProperty("picture_resize").compareTo(configurationBoolean[0]) == 0);
+		FrameDataEnable(configProps.getProperty("picture_frame").compareTo(configurationBoolean[0]) == 0);
+		ColorProfileDataEnable(configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
 
 		if (!cmdExecutables.containsKey("exiftool")) {
 			addToLog("ERROR: exiftool not found", Color.RED);
@@ -766,7 +766,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		startBtn.setMaximumSize(singleObjectDimension);
 		startBtn.setLocation((int) (3 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())
 				+ singleSpacerDimension.getWidth()), 0);
-		
+
 		cancelBtn.setSize(singleObjectDimension);
 		cancelBtn.setMaximumSize(singleObjectDimension);
 		cancelBtn.setLocation((int) (2 * (singleObjectDimension.getWidth() + singleSpacerDimension.getWidth())
@@ -889,10 +889,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		mainTab.addTab("Picture", picturePanel);
 		mainTab.addTab("Travel", travelPanel);
 		mainTab.addChangeListener(new ChangeListener() {
-	        public void stateChanged(ChangeEvent e) {
-	            System.out.println("Tab: " + mainTab.getSelectedIndex());
+			public void stateChanged(ChangeEvent e) {
+				System.out.println("Tab: " + mainTab.getSelectedIndex());
 				startBtn.setEnabled(false);
-	            switch (mainTab.getSelectedIndex()) {
+				switch (mainTab.getSelectedIndex()) {
 				case 0: // Picture
 					if (picture_folderInput != null)
 						startBtn.setEnabled(true);
@@ -904,8 +904,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				default:
 					break;
 				}
-	        }
-	    });
+			}
+		});
 		mainFrame.getContentPane().add(mainTab);
 		GetProgramPaths();
 	}
@@ -989,22 +989,22 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_photographerText.setText(configProps.getProperty("author"));
 		picture_copyrightChckbx
 				.setSelected(configProps.getProperty("copyright").compareTo(configurationBoolean[0]) == 0);
-		picture_commentChckbx.setSelected(configProps.getProperty("info").compareTo(configurationBoolean[0]) == 0);
+		picture_commentChckbx.setSelected(configProps.getProperty("picture_info").compareTo(configurationBoolean[0]) == 0);
 		picture_colorProfileChckbx
-				.setSelected(configProps.getProperty("cprofile").compareTo(configurationBoolean[0]) == 0);
-		picture_cleanExifChckbx.setSelected(configProps.getProperty("noexif").compareTo(configurationBoolean[0]) == 0);
-		picture_colorProfileFile.setSelectedItem((String) configProps.getProperty("cprofileFile"));
+				.setSelected(configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
+		picture_cleanExifChckbx.setSelected(configProps.getProperty("picture_noexif").compareTo(configurationBoolean[0]) == 0);
+		picture_colorProfileFile.setSelectedItem((String) configProps.getProperty("picture_cprofileFile"));
 		picture_watermarkChckbx
-				.setSelected(configProps.getProperty("watermark").compareTo(configurationBoolean[0]) == 0);
+				.setSelected(configProps.getProperty("picture_watermark").compareTo(configurationBoolean[0]) == 0);
 		picture_watermarkSize.setSelectedItem(Float.parseFloat(configProps.getProperty("picture_watermarkSize")));
 		picture_watermarkFont.setSelectedItem((String) (configProps.getProperty("picture_watermarkFont")));
 		picture_watermarkPosition.setSelectedItem((String) (configProps.getProperty("picture_watermarkPosition")));
-		picture_frameChckbx.setSelected(configProps.getProperty("frame").compareTo(configurationBoolean[0]) == 0);
+		picture_frameChckbx.setSelected(configProps.getProperty("picture_frame").compareTo(configurationBoolean[0]) == 0);
 		picture_frameColor.setSelectedItem((String) (configProps.getProperty("picture_frameColor")));
 		picture_frameType.setSelectedItem((String) (configProps.getProperty("picture_frameType")));
 		picture_frameSize.setSelectedItem(Float.parseFloat(configProps.getProperty("picture_frameSize")));
 		picture_frameThickness.setSelectedItem(Float.parseFloat(configProps.getProperty("picture_frameThickness")));
-		picture_resizeChckbx.setSelected(configProps.getProperty("resize").compareTo(configurationBoolean[0]) == 0);
+		picture_resizeChckbx.setSelected(configProps.getProperty("picture_resize").compareTo(configurationBoolean[0]) == 0);
 		picture_resizeEdge.setSelectedItem((String) (configProps.getProperty("picture_resizeEdge")));
 		picture_resizeValue.setSelectedItem((String) (configProps.getProperty("resizeSize")));
 		picture_resizeFullHDChckbx.setSelected(false);
@@ -1015,49 +1015,49 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		if (defaultValues) {
 			configPropsDefault.setProperty("author", "Mirko D. Comparetti");
 			configPropsDefault.setProperty("copyright", configurationBoolean[0]);
-			configPropsDefault.setProperty("info", configurationBoolean[0]);
-			configPropsDefault.setProperty("noexif", configurationBoolean[1]);
-			configPropsDefault.setProperty("cprofile", configurationBoolean[0]);
-			configPropsDefault.setProperty("cprofileFile", "srgb");
-			configPropsDefault.setProperty("frame", configurationBoolean[1]);
+			configPropsDefault.setProperty("picture_info", configurationBoolean[0]);
+			configPropsDefault.setProperty("picture_noexif", configurationBoolean[1]);
+			configPropsDefault.setProperty("picture_cprofile", configurationBoolean[0]);
+			configPropsDefault.setProperty("picture_cprofileFile", "srgb");
+			configPropsDefault.setProperty("picture_frame", configurationBoolean[1]);
 			configPropsDefault.setProperty("picture_frameColor", "white");
 			configPropsDefault.setProperty("picture_frameType", "Inner");
 			configPropsDefault.setProperty("picture_frameSize", "2.0");
 			configPropsDefault.setProperty("picture_frameThickness", "0.25");
-			configPropsDefault.setProperty("watermark", configurationBoolean[1]);
+			configPropsDefault.setProperty("picture_watermark", configurationBoolean[1]);
 			configPropsDefault.setProperty("picture_watermarkSize", "2.0");
 			configPropsDefault.setProperty("picture_watermarkFont", "FFXMarquee");
 			configPropsDefault.setProperty("picture_watermarkPosition", "southeast");
-			configPropsDefault.setProperty("resize", configurationBoolean[1]);
+			configPropsDefault.setProperty("picture_resize", configurationBoolean[1]);
 			configPropsDefault.setProperty("picture_resizeEdge", "Long");
-			configPropsDefault.setProperty("resizeSize", "1600");
+			configPropsDefault.setProperty("picture_resizeSize", "1600");
 		} else {
 			configProps.setProperty("author", picture_photographerText.getText());
 			configProps.setProperty("copyright",
 					picture_copyrightChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
-			configProps.setProperty("info",
+			configProps.setProperty("picture_info",
 					picture_commentChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
-			configProps.setProperty("noexif",
+			configProps.setProperty("picture_noexif",
 					picture_cleanExifChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
-			configProps.setProperty("cprofile",
+			configProps.setProperty("picture_cprofile",
 					picture_colorProfileChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
-			configProps.setProperty("cprofileFile", (String) picture_colorProfileFile.getSelectedItem());
+			configProps.setProperty("picture_cprofileFile", (String) picture_colorProfileFile.getSelectedItem());
 			configProps.setProperty("frame",
 					picture_frameChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("picture_frameColor", (String) (picture_frameColor.getSelectedItem()));
 			configProps.setProperty("picture_frameType", (String) (picture_frameType.getSelectedItem()));
 			configProps.setProperty("picture_frameSize", picture_frameSize.getSelectedItem().toString());
 			configProps.setProperty("picture_frameThickness", picture_frameThickness.getSelectedItem().toString());
-			configProps.setProperty("watermark",
+			configProps.setProperty("picture_watermark",
 					picture_watermarkChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("picture_watermarkSize", picture_watermarkSize.getSelectedItem().toString());
 			configProps.setProperty("picture_watermarkFont", (String) (picture_watermarkFont.getSelectedItem()));
 			configProps.setProperty("picture_watermarkPosition",
 					(String) (picture_watermarkPosition.getSelectedItem()));
-			configProps.setProperty("resize",
+			configProps.setProperty("picture_resize",
 					picture_resizeChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("picture_resizeEdge", (String) (picture_resizeEdge.getSelectedItem()));
-			configProps.setProperty("resizeSize", (String) picture_resizeValue.getSelectedItem());
+			configProps.setProperty("picture_resizeSize", (String) picture_resizeValue.getSelectedItem());
 		}
 	}
 
@@ -1068,7 +1068,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configReader.close();
 
 		} catch (FileNotFoundException exRead) {
-			addToLog("Configuration file not found, default values are saved", false);
+			//addToLog("Configuration file not found, default values are saved", false);
 			configProps = configPropsDefault;
 			SaveConfiguration(true);
 
