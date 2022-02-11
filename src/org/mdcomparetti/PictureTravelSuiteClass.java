@@ -186,8 +186,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	private Task progressTask;
 
-	private MyJTextArea logText;
-
 	private DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
 	private String tmpFolderPath;
@@ -907,18 +905,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_timeChckbx.setLocation(0, 0);
 		travel_timePanel.add(travel_timeChckbx);
 		travel_commandsPanel.add(travel_timePanel);
-		
-		logText = new MyJTextArea();
-		logText.setMargin(new Insets(5, 5, 5, 5));
-		logText.setLocation((int) singleSpacerDimension.getWidth(), 0);
-		logText.setSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
-				(int) (15 * singleObjectDimension.getHeight())));
-		logText.setPreferredSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
-				(int) (15 * singleObjectDimension.getHeight())));
-		logText.setMaximumSize(new Dimension((int) picture_commandsPanel.getSize().getWidth(),
-				(int) (15 * singleObjectDimension.getHeight())));
-		logText.setEditable(false);
-		logText.setTopInsertion(false);
 
 		progressPanel = new JPanel();
 		progressPanel.setBounds((int) (mainTab.getLocation().x),
@@ -1870,7 +1856,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void addToLog(String str, Color textColor, boolean activityBar) {
-		logText.addLine(str, textColor);
 		if (activityBar)
 			errorMsg.setText(str);
 	}
