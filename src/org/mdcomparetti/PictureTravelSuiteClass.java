@@ -43,7 +43,6 @@ import java.util.Properties;
 import java.util.UUID;
 import javax.swing.JFrame;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JButton;
@@ -1323,6 +1322,17 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				+ outname.substring(outname.lastIndexOf("."))));
 	}
 
+	private void printStringList(String prefix, List<String> allowedExtensions) {
+		Collections.sort(allowedExtensions);
+		String tmpStr = "";
+		for (String iterExt : allowedExtensions) {
+			tmpStr += iterExt + ", ";
+		}
+		tmpStr = tmpStr.substring(0, tmpStr.lastIndexOf(","));
+		System.out.println(prefix + tmpStr);
+		addToLog(prefix + tmpStr);
+	}
+
 	private Optional<String> getExtension(String filename) {
 		return Optional.ofNullable(filename).filter(f -> f.contains("."))
 				.map(f -> f.substring(filename.lastIndexOf(".") + 1));
@@ -1825,15 +1835,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		addToLog("Merging all GPS files");
 
 		List<String> allowedExtensions = Arrays.asList(new String[] { ".gpx" });
-		Collections.sort(allowedExtensions);
 		List<File> listOfFiles = SelectFiles(inFile.getParentFile(), allowedExtensions);
-		String tmpStr = "";
-		for (String iterExt : allowedExtensions) {
-			tmpStr += iterExt + ", ";
-		}
-		tmpStr.substring(0, tmpStr.length() - 2);
-		System.out.println("Processing files with extensions: " + tmpStr);
-		addToLog("Processing files with extensions: " + tmpStr);
+		printStringList("Processing files with extensions: ", allowedExtensions); 
 
 		List<String> commandArray = new ArrayList<String>();
 		commandArray.add(cmdExecutables.get("gpsbabel").toString());
@@ -2042,14 +2045,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 				List<String> allowedExtensions = Arrays
 						.asList(new String[] { ".jpg", ".jpeg", ".tif", ".tiff", ".png" });
-				Collections.sort(allowedExtensions);
 				List<File> listOfFiles = SelectFiles(picture_folderInput, allowedExtensions);
-				String tmpStr = "";
-				for (String iterExt : allowedExtensions) {
-					tmpStr += iterExt + ", ";
-				}
-				tmpStr.substring(0, tmpStr.length() - 2);
-				addToLog("Processing files with extensions: " + tmpStr);
+				printStringList("Processing files with extensions: ", allowedExtensions);
 
 				if (picture_folderInput != picture_folderOutput) {
 					addToLog("Copying files from source to target", false);
@@ -2123,34 +2120,37 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				try {
 					boolean allOk = true;
 					if (travel_mergeChckbx.isSelected()) {
-						outFile = addSuffixFile(workFile, "-merge");
+						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "merge");
 						command_TravelMerge(workFile, outFile);
 						if (workFile != travel_fileInput)
 							workFile.delete();
 						workFile = outFile;
 					}
 					if (travel_filterChckbx.isSelected()) {
-						outFile = addSuffixFile(workFile, "-filter");
+						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "filter");
 						command_TravelFilter(workFile, outFile);
 						if (workFile != travel_fileInput)
 							workFile.delete();
 						workFile = outFile;
 					}
 					if (travel_simplifyChckbx.isSelected()) {
-						outFile = addSuffixFile(workFile, "-simplify");
+						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "simplify");
 						command_TravelSimplify(workFile, outFile);
 						if (workFile != travel_fileInput)
 							workFile.delete();
 						workFile = outFile;
 					}
 					if (travel_timeChckbx.isSelected()) {
-						outFile = addSuffixFile(workFile, "-time");
+						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "time");
 						command_TravelFaketime(workFile, outFile);
 						if (workFile != travel_fileInput)
 							workFile.delete();
 						workFile = outFile;
 					}
+					if (travel_fileOutput.exists())
+						travel_fileOutput = addSuffixFile(travel_fileOutput, UUID.randomUUID().toString().substring(8, 13));
 					workFile.renameTo(travel_fileOutput);
+					travel_fileOutputText.setText("Proposed file: " + travel_fileOutput.toString());
 
 					if (!allOk) {
 						throw new InterruptedException();
