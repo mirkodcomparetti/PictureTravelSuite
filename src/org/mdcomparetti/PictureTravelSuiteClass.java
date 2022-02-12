@@ -10,7 +10,6 @@ import java.awt.event.WindowEvent;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
@@ -41,6 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 import javax.swing.JFrame;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -150,16 +150,21 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	private JTextField travel_fileOutputText;
 
 	private JPanel travel_commandsPanel;
-	
+
 	private JPanel travel_mergePanel;
 	private JCheckBox travel_mergeChckbx;
-	
+
+	private JPanel travel_filterPanel;
+	private JCheckBox travel_filterChckbx;
+	private DefaultComboBoxModel<String> travel_filterValueModel;
+	private JComboBox<String> travel_filterValue;
+
 	private JPanel travel_simplifyPanel;
 	private JCheckBox travel_simplifyChckbx;
 	private DefaultComboBoxModel<String> travel_simplifyValueModel;
 	private JComboBox<String> travel_simplifyValue;
 	private JCheckBox travel_simplifyGmapsChckbx;
-	
+
 	private JPanel travel_timePanel;
 	private JCheckBox travel_timeChckbx;
 
@@ -214,11 +219,13 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		tmpFolderPath = System.getProperty("java.io.tmpdir");
 		tmpFolderPath += softwareNameShort + "Tmp";
 		GetConfigProps();
-		picture_WatermarkDataEnable(configProps.getProperty("picture_watermark").compareTo(configurationBoolean[0]) == 0);
+		picture_WatermarkDataEnable(
+				configProps.getProperty("picture_watermark").compareTo(configurationBoolean[0]) == 0);
 		picture_ResizeDataEnable(configProps.getProperty("picture_resize").compareTo(configurationBoolean[0]) == 0);
 		picture_FrameDataEnable(configProps.getProperty("picture_frame").compareTo(configurationBoolean[0]) == 0);
-		picture_ColorProfileDataEnable(configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
-		
+		picture_ColorProfileDataEnable(
+				configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
+
 		travel_SimplifyDataEnable(configProps.getProperty("travel_simplify").compareTo(configurationBoolean[0]) == 0);
 
 		if (!cmdExecutables.containsKey("exiftool")) {
@@ -270,8 +277,9 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travelPanel.setEnabled(false);
 		travel_selectInputFileBtn.setEnabled(false);
 		travel_selectOutputFileBtn.setEnabled(false);
-		travel_simplifyChckbx.setEnabled(false);
 		travel_mergeChckbx.setEnabled(false);
+		travel_filterChckbx.setEnabled(false);
+		travel_simplifyChckbx.setEnabled(false);
 		travel_timeChckbx.setEnabled(false);
 	}
 
@@ -437,14 +445,14 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_commentChckbx.setSize(singleObjectDimension);
 		picture_commentChckbx.setMaximumSize(singleObjectDimension);
 		picture_miscPanel.add(picture_commentChckbx);
-		
+
 		picture_copyrightChckbx = new JCheckBox("Copyright");
 		picture_copyrightChckbx.setToolTipText("Adds copyright info on the file");
 		picture_copyrightChckbx.setLocation(0, 0);
 		picture_copyrightChckbx.setSize(singleObjectDimension);
 		picture_copyrightChckbx.setMaximumSize(singleObjectDimension);
 		picture_miscPanel.add(picture_copyrightChckbx);
-		
+
 		picture_cleanExifChckbx = new JCheckBox("No EXIF");
 		picture_cleanExifChckbx.setToolTipText("Cleans the EXIF information: photoshop, software");
 		picture_cleanExifChckbx.setLocation(0,
@@ -778,7 +786,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_fileOutputText.setLocation(0,
 				(int) (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight()));
 		travel_fileOutputText.setToolTipText("Show the selected target file");
-		travel_fileOutputText.setText("Target file not selected, using source file");
+		travel_fileOutputText.setText("Target file not selected, adding new file in source folder");
 		travel_fileOutputText.setEditable(false);
 		travel_fileOutputText.setColumns(26);
 
@@ -824,10 +832,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_mergePanel = new JPanel();
 		travel_mergePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		travel_mergePanel.setLocation(0, 0);
-		travel_mergePanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
-				(int) singleObjectDimension.getHeight()));
-		travel_mergePanel.setMaximumSize(new Dimension((int) singleObjectDimension.getWidth(),
-				(int) singleObjectDimension.getHeight()));
+		travel_mergePanel.setSize(
+				new Dimension((int) singleObjectDimension.getWidth(), (int) singleObjectDimension.getHeight()));
+		travel_mergePanel.setMaximumSize(
+				new Dimension((int) singleObjectDimension.getWidth(), (int) singleObjectDimension.getHeight()));
 		travel_mergePanel.setLayout(null);
 
 		travel_mergeChckbx = new JCheckBox("Merge");
@@ -839,14 +847,56 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_mergePanel.add(travel_mergeChckbx);
 		travel_commandsPanel.add(travel_mergePanel);
 
+		travel_filterPanel = new JPanel();
+		travel_filterPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		travel_filterPanel.setLocation((int) (singleObjectDimension.getWidth() + 2 * singleSpacerDimension.getWidth()),
+				0);
+		travel_filterPanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
+				(int) (3 * singleObjectDimension.getHeight() + 4 * singleSpacerDimension.getHeight())));
+		travel_filterPanel.setMaximumSize(new Dimension((int) singleObjectDimension.getWidth(),
+				(int) (3 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight()))));
+		travel_filterPanel.setLayout(null);
+		travel_commandsPanel.add(travel_filterPanel);
+
+		travel_filterChckbx = new JCheckBox("Filter");
+		travel_filterChckbx.setToolTipText("Filter track points");
+		travel_filterChckbx.setActionCommand("travel_filter");
+		travel_filterChckbx.addActionListener(this);
+		travel_filterChckbx.setSize(singleObjectDimension);
+		travel_filterChckbx.setMaximumSize(singleObjectDimension);
+		travel_filterChckbx.setLocation(0, 0);
+		travel_filterPanel.add(travel_filterChckbx);
+
+		travel_filterValueModel = new DefaultComboBoxModel<String>(
+				new String[] { "10", "25", "50", "100", "150", "200", "250" });
+		travel_filterValue = new JComboBox<String>(travel_filterValueModel);
+		travel_filterValue.setEditable(true);
+		travel_filterValue.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if ("comboBoxEdited".equals(e.getActionCommand())) {
+					Object newValue = travel_filterValueModel.getSelectedItem();
+					travel_filterValueModel.addElement((String) newValue);
+					travel_filterValue.setSelectedItem(newValue);
+				}
+			}
+		});
+		travel_filterValue.setSize(singleObjectDimension);
+		travel_filterValue.setMaximumSize(singleObjectDimension);
+		travel_filterValue.setLocation(0,
+				(int) (1 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())));
+		travel_filterPanel.add(travel_filterValue);
+
 		travel_simplifyPanel = new JPanel();
 		travel_simplifyPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		travel_simplifyPanel.setLocation((int) (singleObjectDimension.getWidth() + 2 * singleSpacerDimension.getWidth()), 0);
+		travel_simplifyPanel
+				.setLocation((int) (2 * singleObjectDimension.getWidth() + 3 * singleSpacerDimension.getWidth()), 0);
 		travel_simplifyPanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
 				(int) (3 * singleObjectDimension.getHeight() + 4 * singleSpacerDimension.getHeight())));
 		travel_simplifyPanel.setMaximumSize(new Dimension((int) singleObjectDimension.getWidth(),
 				(int) (3 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight()))));
 		travel_simplifyPanel.setLayout(null);
+		travel_commandsPanel.add(travel_simplifyPanel);
 
 		travel_simplifyChckbx = new JCheckBox("Simplify");
 		travel_simplifyChckbx.setToolTipText("Simplify track points");
@@ -886,15 +936,15 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_simplifyGmapsChckbx.setLocation(0,
 				(int) (2 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())));
 		travel_simplifyPanel.add(travel_simplifyGmapsChckbx);
-		travel_commandsPanel.add(travel_simplifyPanel);
 
 		travel_timePanel = new JPanel();
 		travel_timePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		travel_timePanel.setLocation((int) (2* singleObjectDimension.getWidth() + 3 * singleSpacerDimension.getWidth()), 0);
-		travel_timePanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
-				(int) singleObjectDimension.getHeight()));
-		travel_timePanel.setMaximumSize(new Dimension((int) singleObjectDimension.getWidth(),
-				(int) singleObjectDimension.getHeight()));
+		travel_timePanel
+				.setLocation((int) (3 * singleObjectDimension.getWidth() + 4 * singleSpacerDimension.getWidth()), 0);
+		travel_timePanel.setSize(
+				new Dimension((int) singleObjectDimension.getWidth(), (int) singleObjectDimension.getHeight()));
+		travel_timePanel.setMaximumSize(
+				new Dimension((int) singleObjectDimension.getWidth(), (int) singleObjectDimension.getHeight()));
 		travel_timePanel.setLayout(null);
 
 		travel_timeChckbx = new JCheckBox("Fake time");
@@ -989,7 +1039,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		bottomPanel.add(errorMsg);
 		bottomPanel.add(Box.createHorizontalGlue());
 		bottomPanel.add(infoLbl);
-		
+
 		mainFrame.setSize(
 				(int) (bottomPanel.getLocation().x + bottomPanel.getSize().getWidth()
 						+ 3 * singleSpacerDimension.getWidth()),
@@ -1127,12 +1177,14 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_resizeUltraHDChckbx
 				.setSelected(configProps.getProperty("picture_resizeSizeUHD").compareTo(configurationBoolean[0]) == 0);
 
+		travel_filterChckbx
+				.setSelected(configProps.getProperty("travel_filter").compareTo(configurationBoolean[0]) == 0);
+		travel_filterValue.setSelectedItem((String) (configProps.getProperty("travel_filterValue")));
 		travel_simplifyChckbx
 				.setSelected(configProps.getProperty("travel_simplify").compareTo(configurationBoolean[0]) == 0);
 		travel_simplifyValue.setSelectedItem((String) (configProps.getProperty("travel_simplifyValue")));
 		travel_simplifyGmapsChckbx
 				.setSelected(configProps.getProperty("travel_simplifyGmaps").compareTo(configurationBoolean[0]) == 0);
-
 		travel_timeChckbx
 				.setSelected(configProps.getProperty("travel_faketime").compareTo(configurationBoolean[0]) == 0);
 	}
@@ -1160,6 +1212,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configPropsDefault.setProperty("picture_resizeSizeFHD", configurationBoolean[1]);
 			configPropsDefault.setProperty("picture_resizeSizeUHD", configurationBoolean[1]);
 
+			configPropsDefault.setProperty("travel_filter", configurationBoolean[1]);
+			configPropsDefault.setProperty("travel_filterValue", "50");
 			configPropsDefault.setProperty("travel_simplify", configurationBoolean[1]);
 			configPropsDefault.setProperty("travel_simplifyValue", "15000");
 			configPropsDefault.setProperty("travel_simplifyGmaps", configurationBoolean[1]);
@@ -1196,6 +1250,9 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configProps.setProperty("picture_resizeSizeUHD",
 					picture_resizeUltraHDChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 
+			configProps.setProperty("travel_filter",
+					travel_filterChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
+			configProps.setProperty("travel_filterValue", (String) travel_filterValue.getSelectedItem());
 			configProps.setProperty("travel_simplify",
 					travel_simplifyChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("travel_simplifyValue", (String) travel_simplifyValue.getSelectedItem());
@@ -1267,24 +1324,31 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				extList.add(selectedExt.toLowerCase());
 			}
 		}
+		System.out.println(extList);
 		String extension;
+		Optional<String> optionextension;
 		for (File selectedFile : listOfFiles) {
-			extension = "." + getExtension(selectedFile.toString()).get();
-			extension = caseSensitive ? extension : extension.toLowerCase();
-			if (extList.contains(extension))
-				fileList.add(selectedFile);
-			else
-				System.out.println("NotAdded");
+			optionextension = getExtension(selectedFile.toString());
+			if (optionextension.isPresent()) {
+				extension = "." + getExtension(selectedFile.toString()).get();
+				extension = caseSensitive ? extension : extension.toLowerCase();
+				if (!extension.isEmpty() && extList.contains(extension))
+					fileList.add(selectedFile);
+				else
+					System.out.println("NotAdded");
+			} else
+				System.out.println("NotAdded-> Folder");
 		}
+		System.out.println(fileList);
 		return fileList;
 	}
 
-	private List<File> SelectFiles(List<String> allowedExtensions, boolean caseSensitive) {
-		return filterFilesExtension(this.picture_folderInput.listFiles(), allowedExtensions, caseSensitive);
+	private List<File> SelectFiles(File workfolder, List<String> allowedExtensions, boolean caseSensitive) {
+		return filterFilesExtension(workfolder.listFiles(), allowedExtensions, caseSensitive);
 	}
 
-	private List<File> SelectFiles(List<String> allowedExtensions) {
-		return SelectFiles(allowedExtensions, false);
+	private List<File> SelectFiles(File workfolder, List<String> allowedExtensions) {
+		return SelectFiles(workfolder, allowedExtensions, false);
 	}
 
 	private String[] FilesToString(List<File> fileList) {
@@ -1364,7 +1428,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_resizeFullHDChckbx.setEnabled(enable && !picture_resizeUltraHDChckbx.isSelected());
 		picture_resizeUltraHDChckbx.setEnabled(enable && !picture_resizeFullHDChckbx.isSelected());
 		if (enable) {
-			picture_ResizeCustomEnable(!(picture_resizeFullHDChckbx.isSelected() || picture_resizeUltraHDChckbx.isSelected()));
+			picture_ResizeCustomEnable(
+					!(picture_resizeFullHDChckbx.isSelected() || picture_resizeUltraHDChckbx.isSelected()));
 		} else {
 			picture_resizeValue.setEnabled(enable);
 			picture_resizeEdge.setEnabled(enable);
@@ -1401,7 +1466,11 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_colorProfileFile.setEnabled(enable);
 		picture_colorProfileIntent.setEnabled(enable);
 	}
-	
+
+	private void travel_FilterDataEnable(boolean enable) {
+		travel_filterValue.setEnabled(enable);
+	}
+
 	private void travel_SimplifyDataEnable(boolean enable) {
 		travel_simplifyGmapsChckbx.setEnabled(enable && !travel_simplifyGmapsChckbx.isSelected());
 		if (enable) {
@@ -1413,17 +1482,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	private void travel_SimplifyCustomEnable(boolean enable) {
 		travel_simplifyValue.setEnabled(enable);
-	}
-
-	private void travel_SimplifyCustomEnable(boolean enable, String checkbox) {
-		travel_SimplifyCustomEnable(enable);
-		switch (checkbox) {
-		case "gmaps":
-			travel_simplifyGmapsChckbx.setEnabled(enable);
-			break;
-		default:
-			break;
-		}
 	}
 
 	private String GetOffset(String textPosition, Point offsetPoint) {
@@ -1734,32 +1792,107 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		executeCommand(command);
 	}
 
-	private void command_GpsSimplify(String workingFile) {
+	private String gpsTypeFromExtension(File selectedFile) {
+		switch (getExtension(selectedFile.toString()).get()) {
+		case "loc":
+			return "geo";
+		case "wpt":
+			return "pcx";
+		default:
+			break;
+		}
+		return getExtension(selectedFile.toString()).get();
+	}
+
+	private void command_TravelMerge() {
+		if (!this.isRunning)
+			return;
+		addToLog("Merging all GPS files");
+
+		System.out.println(travel_fileInput.getParent());
+
+		List<String> allowedExtensions = Arrays.asList(new String[] { ".gpx" });
+		Collections.sort(allowedExtensions);
+		List<File> listOfFiles = SelectFiles(travel_fileInput.getParentFile(), allowedExtensions);
+		String tmpStr = "";
+		for (String iterExt : allowedExtensions) {
+			tmpStr += iterExt + ", ";
+		}
+		tmpStr.substring(0, tmpStr.length() - 2);
+		System.out.println("Processing files with extensions: " + tmpStr);
+		addToLog("Processing files with extensions: " + tmpStr);
+
+		List<String> commandArray = new ArrayList<String>();
+		commandArray.add(cmdExecutables.get("gpsbabel").toString());
+		for (File selectedFile : listOfFiles) {
+			commandArray.add("-i");
+			commandArray.add(gpsTypeFromExtension(selectedFile));
+			commandArray.add("-f");
+			commandArray.add(selectedFile.getAbsolutePath());
+		}
+		commandArray.add("-o");
+		commandArray.add(gpsTypeFromExtension(travel_fileOutput));
+		commandArray.add("-F");
+		commandArray.add(travel_fileOutput.getAbsolutePath());
+
+		executeCommand(commandArray.toArray(new String[0]));
+	}
+
+	private void command_TravelFilter() {
 		// TODO: Simplify file
 		if (!this.isRunning)
 			return;
-		addToLog("Changing datapoints of " + workingFile);
+		addToLog("Changing datapoints of " + travel_fileInput.toString());
 
-		String[] command;
+		/*
+		 * String[] command;
+		 * 
+		 * command = new String[] { cmdExecutables.get("gpsbabel").toString(),
+		 * picture_folderOutput + File.separator + workingFile, "-resize",
+		 * Float.toString(resizeRatio) + "%", picture_folderOutput + File.separator +
+		 * workingFile };
+		 * 
+		 * executeCommand(command);
+		 */
+	}
 
-		Dimension imgSize = GetImageSize(workingFile, picture_folderOutput);
+	private void command_TravelSimplify() {
+		// TODO: Simplify file
+		if (!this.isRunning)
+			return;
+		addToLog("Changing datapoints of " + travel_fileInput.toString());
 
-		float resizeRatio = 100;
-		int dimensionRef = 1000;
-		dimensionRef = (int) Max((float) imgSize.getWidth(), (float) imgSize.getHeight());
-		if (picture_resizeEdge.getSelectedItem().toString().compareToIgnoreCase("short") == 0)
-			dimensionRef = (int) Min((float) imgSize.getWidth(), (float) imgSize.getHeight());
-		try {
-			resizeRatio = (float) (((float) Integer.parseInt(picture_resizeValue.getSelectedItem().toString()))
-					/ ((float) dimensionRef) * 100.0);
-		} catch (Exception e) {
-			addToLog("Exception");
-		}
-		command = new String[] { cmdExecutables.get("gpsbabel").toString(),
-				picture_folderOutput + File.separator + workingFile, "-resize", Float.toString(resizeRatio) + "%",
-				picture_folderOutput + File.separator + workingFile };
+		/*
+		 * String[] command;
+		 * 
+		 * command = new String[] { cmdExecutables.get("gpsbabel").toString(),
+		 * picture_folderOutput + File.separator + workingFile, "-resize",
+		 * Float.toString(resizeRatio) + "%", picture_folderOutput + File.separator +
+		 * workingFile };
+		 * 
+		 * executeCommand(command);
+		 */
+	}
 
-		executeCommand(command);
+	private void command_TravelFaketime() {
+		if (!this.isRunning)
+			return;
+		addToLog("Changing date time with fake datetime for " + travel_fileInput.toString());
+
+		List<String> commandArray = new ArrayList<String>();
+		commandArray.add(cmdExecutables.get("gpsbabel").toString());
+		commandArray.add("-i");
+		commandArray.add(gpsTypeFromExtension(travel_fileOutput));
+		commandArray.add("-f");
+		commandArray.add(travel_fileOutput.getAbsolutePath());
+		commandArray.add("-x");
+		commandArray.add("track,faketime=f19700101000000+2");
+		commandArray.add("-o");
+		commandArray.add(gpsTypeFromExtension(travel_fileOutput));
+		commandArray.add("-F");
+		commandArray.add(travel_fileOutput.getAbsolutePath());
+
+		executeCommand(commandArray.toArray(new String[0]));
 	}
 
 	private String executeCommand(String[] command) {
@@ -1887,7 +2020,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				List<String> allowedExtensions = Arrays
 						.asList(new String[] { ".jpg", ".jpeg", ".tif", ".tiff", ".png" });
 				Collections.sort(allowedExtensions);
-				List<File> listOfFiles = SelectFiles(allowedExtensions);
+				List<File> listOfFiles = SelectFiles(picture_folderInput, allowedExtensions);
 				String tmpStr = "";
 				for (String iterExt : allowedExtensions) {
 					tmpStr += iterExt + ", ";
@@ -1956,8 +2089,34 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				}
 				break;
 			case 1: // Travel
-				if (!checkWorkTravel())
+				if (!checkWorkTravel()) {
+					isRunning = false;
 					return null;
+				}
+
+				try {
+					boolean allOk = true;
+					if (travel_mergeChckbx.isSelected())
+						command_TravelMerge();
+					if (travel_filterChckbx.isSelected())
+						command_TravelFilter();
+					if (travel_simplifyChckbx.isSelected())
+						command_TravelSimplify();
+					if (travel_timeChckbx.isSelected())
+						command_TravelFaketime();
+
+					if (!allOk) {
+						throw new InterruptedException();
+					}
+					if (!isRunning)
+						throw new InterruptedException();
+				} catch (InterruptedException e) {
+				}
+				/*
+				 * if (isRunning) addToLog(t.getName() + " processed " + numFilesProcessed +
+				 * " files.", Color.GREEN, false); else addToLog(t.getName() +
+				 * " interrupted by the user.", Color.GREEN);
+				 */
 				break;
 			default:
 				break;
@@ -1998,6 +2157,12 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		public boolean checkWorkTravel() {
 			if (travel_fileInput == null) {
 				addToLog("ERROR: Select a source file first!", Color.RED, false);
+				return false;
+			}
+			if (!(travel_mergeChckbx.isSelected() || travel_filterChckbx.isSelected() || travel_timeChckbx.isSelected()
+					|| travel_simplifyChckbx.isSelected())) {
+				System.out.println("No process selected");
+				addToLog("ERROR: No process selected.", Color.RED, false);
 				return false;
 			}
 			return true;
@@ -2046,6 +2211,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_commentChckbx.setEnabled(enabled);
 		picture_cleanExifChckbx.setEnabled(enabled);
 
+		travel_filterChckbx.setEnabled(enabled);
 		travel_simplifyChckbx.setEnabled(enabled);
 
 		if (enabled) {
@@ -2053,11 +2219,17 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			picture_ResizeDataEnable(picture_resizeChckbx.isSelected());
 			picture_FrameDataEnable(picture_frameChckbx.isSelected());
 			picture_ColorProfileDataEnable(picture_colorProfileChckbx.isSelected());
+
+			travel_FilterDataEnable(travel_filterChckbx.isSelected());
+			travel_SimplifyDataEnable(travel_simplifyChckbx.isSelected());
 		} else {
 			picture_WatermarkDataEnable(false);
 			picture_ResizeDataEnable(false);
 			picture_FrameDataEnable(false);
 			picture_ColorProfileDataEnable(false);
+
+			travel_FilterDataEnable(false);
+			travel_SimplifyDataEnable(false);
 		}
 	}
 
@@ -2112,6 +2284,12 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					travel_fileInput = travel_fileChooser.getSelectedFile();
 					travel_fileOutput = travel_fileInput;
 					travel_fileInputText.setText(travel_fileInput.toString());
+					String outname = travel_fileInput.getName();
+					travel_fileOutput = new File(travel_fileInput.getParent() + File.separator
+							+ outname.substring(0, outname.lastIndexOf("."))
+							+ UUID.randomUUID().toString().substring(8, 13)
+							+ outname.substring(outname.lastIndexOf(".")));
+					travel_fileOutputText.setText("Proposed file: " + travel_fileOutput.toString());
 					startBtn.setEnabled(true);
 					travel_selectOutputFileBtn.setEnabled(true);
 				} else {
@@ -2123,7 +2301,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					travel_fileOutput = travel_fileChooser.getSelectedFile();
 					travel_fileOutputText.setText(travel_fileOutput.toString());
 				} else {
-					addToLog("Target file not selected: overwriting the source file.", false);
+					addToLog("Target file not selected: adding a new file in the same folder.", false);
 				}
 			}
 			break;
@@ -2157,6 +2335,11 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				picture_ResizeCustomEnable(!picture_resizeUltraHDChckbx.isSelected(), "fullhd");
 			}
 			break;
+		case "travel_filter":
+			if (evt.getSource() == travel_filterChckbx) {
+				travel_FilterDataEnable(travel_filterChckbx.isSelected());
+			}
+			break;
 		case "travel_simplify":
 			if (evt.getSource() == travel_simplifyChckbx) {
 				travel_SimplifyDataEnable(travel_simplifyChckbx.isSelected());
@@ -2164,7 +2347,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			break;
 		case "travel_simplifygmaps":
 			if (evt.getSource() == travel_simplifyGmapsChckbx) {
-				//travel_SimplifyCustomEnable(!travel_simplifyGmapsChckbx.isSelected(), "gmaps");
+				// travel_SimplifyCustomEnable(!travel_simplifyGmapsChckbx.isSelected(),
+				// "gmaps");
 				travel_SimplifyCustomEnable(!travel_simplifyGmapsChckbx.isSelected());
 			}
 			break;
