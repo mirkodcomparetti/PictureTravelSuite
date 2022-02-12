@@ -1310,6 +1310,18 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		return ((f > g) ? g : f);
 	}
 
+	private File addSuffixFile(File workfile) {
+		return addSuffixFile(workfile, UUID.randomUUID().toString().substring(8, 13));
+	}
+
+	private File addSuffixFile(File workfile, String suffix) {
+		String outname = workfile.getName();
+		return (new File(workfile.getParent() + File.separator
+				+ outname.substring(0, outname.lastIndexOf("."))
+				+ suffix
+				+ outname.substring(outname.lastIndexOf("."))));
+	}
+
 	private Optional<String> getExtension(String filename) {
 		return Optional.ofNullable(filename).filter(f -> f.contains("."))
 				.map(f -> f.substring(filename.lastIndexOf(".") + 1));
@@ -1798,6 +1810,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			return "geo";
 		case "wpt":
 			return "pcx";
+		case "anr":
+			return "saroute";
 		default:
 			break;
 		}
@@ -1805,15 +1819,17 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	}
 
 	private void command_TravelMerge() {
+		command_TravelMerge(travel_fileInput, travel_fileOutput);
+	}
+
+	private void command_TravelMerge(File inFile, File outFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Merging all GPS files");
 
-		System.out.println(travel_fileInput.getParent());
-
 		List<String> allowedExtensions = Arrays.asList(new String[] { ".gpx" });
 		Collections.sort(allowedExtensions);
-		List<File> listOfFiles = SelectFiles(travel_fileInput.getParentFile(), allowedExtensions);
+		List<File> listOfFiles = SelectFiles(inFile.getParentFile(), allowedExtensions);
 		String tmpStr = "";
 		for (String iterExt : allowedExtensions) {
 			tmpStr += iterExt + ", ";
@@ -1831,50 +1847,72 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			commandArray.add(selectedFile.getAbsolutePath());
 		}
 		commandArray.add("-o");
-		commandArray.add(gpsTypeFromExtension(travel_fileOutput));
+		commandArray.add(gpsTypeFromExtension(outFile));
 		commandArray.add("-F");
-		commandArray.add(travel_fileOutput.getAbsolutePath());
+		commandArray.add(outFile.getAbsolutePath());
 
 		executeCommand(commandArray.toArray(new String[0]));
 	}
 
 	private void command_TravelFilter() {
-		// TODO: Simplify file
+		command_TravelFilter(travel_fileInput, travel_fileOutput);
+	}
+
+	private void command_TravelFilter(File inFile, File outFile) {
 		if (!this.isRunning)
 			return;
-		addToLog("Changing datapoints of " + travel_fileInput.toString());
+		addToLog("Filtering datapoints of " + travel_fileInput.toString());
 
-		/*
-		 * String[] command;
-		 * 
-		 * command = new String[] { cmdExecutables.get("gpsbabel").toString(),
-		 * picture_folderOutput + File.separator + workingFile, "-resize",
-		 * Float.toString(resizeRatio) + "%", picture_folderOutput + File.separator +
-		 * workingFile };
-		 * 
-		 * executeCommand(command);
-		 */
+		List<String> commandArray = new ArrayList<String>();
+		commandArray.add(cmdExecutables.get("gpsbabel").toString());
+		commandArray.add("-i");
+		commandArray.add(gpsTypeFromExtension(inFile));
+		commandArray.add("-f");
+		commandArray.add(inFile.getAbsolutePath());
+		commandArray.add("-x");
+		commandArray.add("simplify,crosstrack,error="
+				+ ((double) Integer.parseInt(travel_filterValue.getSelectedItem().toString()) / 1000.0) + "k");
+		commandArray.add("-o");
+		commandArray.add(gpsTypeFromExtension(outFile));
+		commandArray.add("-F");
+		commandArray.add(outFile.getAbsolutePath());
+
+		executeCommand(commandArray.toArray(new String[0]));
 	}
 
 	private void command_TravelSimplify() {
-		// TODO: Simplify file
+		command_TravelSimplify(travel_fileInput, travel_fileOutput);
+	}
+
+	private void command_TravelSimplify(File inFile, File outFile) {
 		if (!this.isRunning)
 			return;
-		addToLog("Changing datapoints of " + travel_fileInput.toString());
+		String countPoints = travel_simplifyValue.getSelectedItem().toString();
+		if (travel_simplifyGmapsChckbx.isSelected())
+			countPoints = "1000";
+		addToLog("Changing datapoints of " + travel_fileInput.toString() + " to " + countPoints);
 
-		/*
-		 * String[] command;
-		 * 
-		 * command = new String[] { cmdExecutables.get("gpsbabel").toString(),
-		 * picture_folderOutput + File.separator + workingFile, "-resize",
-		 * Float.toString(resizeRatio) + "%", picture_folderOutput + File.separator +
-		 * workingFile };
-		 * 
-		 * executeCommand(command);
-		 */
+		List<String> commandArray = new ArrayList<String>();
+		commandArray.add(cmdExecutables.get("gpsbabel").toString());
+		commandArray.add("-i");
+		commandArray.add(gpsTypeFromExtension(inFile));
+		commandArray.add("-f");
+		commandArray.add(inFile.getAbsolutePath());
+		commandArray.add("-x");
+		commandArray.add("simplify,count=" + countPoints);
+		commandArray.add("-o");
+		commandArray.add(gpsTypeFromExtension(outFile));
+		commandArray.add("-F");
+		commandArray.add(outFile.getAbsolutePath());
+
+		executeCommand(commandArray.toArray(new String[0]));
 	}
 
 	private void command_TravelFaketime() {
+		command_TravelFaketime(travel_fileInput, travel_fileOutput);
+	}
+
+	private void command_TravelFaketime(File inFile, File outFile) {
 		if (!this.isRunning)
 			return;
 		addToLog("Changing date time with fake datetime for " + travel_fileInput.toString());
@@ -1882,15 +1920,15 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		List<String> commandArray = new ArrayList<String>();
 		commandArray.add(cmdExecutables.get("gpsbabel").toString());
 		commandArray.add("-i");
-		commandArray.add(gpsTypeFromExtension(travel_fileOutput));
+		commandArray.add(gpsTypeFromExtension(inFile));
 		commandArray.add("-f");
-		commandArray.add(travel_fileOutput.getAbsolutePath());
+		commandArray.add(inFile.getAbsolutePath());
 		commandArray.add("-x");
 		commandArray.add("track,faketime=f19700101000000+2");
 		commandArray.add("-o");
-		commandArray.add(gpsTypeFromExtension(travel_fileOutput));
+		commandArray.add(gpsTypeFromExtension(outFile));
 		commandArray.add("-F");
-		commandArray.add(travel_fileOutput.getAbsolutePath());
+		commandArray.add(outFile.getAbsolutePath());
 
 		executeCommand(commandArray.toArray(new String[0]));
 	}
@@ -2094,16 +2132,41 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					return null;
 				}
 
+				File workFile = travel_fileInput;
+				File inFile = travel_fileInput;
+				File outFile = travel_fileOutput;
+
 				try {
 					boolean allOk = true;
-					if (travel_mergeChckbx.isSelected())
-						command_TravelMerge();
-					if (travel_filterChckbx.isSelected())
-						command_TravelFilter();
-					if (travel_simplifyChckbx.isSelected())
-						command_TravelSimplify();
-					if (travel_timeChckbx.isSelected())
-						command_TravelFaketime();
+					if (travel_mergeChckbx.isSelected()) {
+						outFile = addSuffixFile(workFile, "-merge");
+						command_TravelMerge(workFile, outFile);
+						if (workFile != travel_fileInput)
+							workFile.delete();
+						workFile = outFile;
+					}
+					if (travel_filterChckbx.isSelected()) {
+						outFile = addSuffixFile(workFile, "-filter");
+						command_TravelFilter(workFile, outFile);
+						if (workFile != travel_fileInput)
+							workFile.delete();
+						workFile = outFile;
+					}
+					if (travel_simplifyChckbx.isSelected()) {
+						outFile = addSuffixFile(workFile, "-simplify");
+						command_TravelSimplify(workFile, outFile);
+						if (workFile != travel_fileInput)
+							workFile.delete();
+						workFile = outFile;
+					}
+					if (travel_timeChckbx.isSelected()) {
+						outFile = addSuffixFile(workFile, "-time");
+						command_TravelFaketime(workFile, outFile);
+						if (workFile != travel_fileInput)
+							workFile.delete();
+						workFile = outFile;
+					}
+					workFile.renameTo(travel_fileOutput);
 
 					if (!allOk) {
 						throw new InterruptedException();
@@ -2112,11 +2175,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 						throw new InterruptedException();
 				} catch (InterruptedException e) {
 				}
-				/*
-				 * if (isRunning) addToLog(t.getName() + " processed " + numFilesProcessed +
-				 * " files.", Color.GREEN, false); else addToLog(t.getName() +
-				 * " interrupted by the user.", Color.GREEN);
-				 */
 				break;
 			default:
 				break;
@@ -2159,7 +2217,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				addToLog("ERROR: Select a source file first!", Color.RED, false);
 				return false;
 			}
-			if (!(travel_mergeChckbx.isSelected() || travel_filterChckbx.isSelected() || travel_timeChckbx.isSelected()
+			if (!(travel_mergeChckbx.isSelected() || travel_filterChckbx.isSelected()
+					|| travel_simplifyChckbx.isSelected() || travel_timeChckbx.isSelected()
 					|| travel_simplifyChckbx.isSelected())) {
 				System.out.println("No process selected");
 				addToLog("ERROR: No process selected.", Color.RED, false);
@@ -2284,11 +2343,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					travel_fileInput = travel_fileChooser.getSelectedFile();
 					travel_fileOutput = travel_fileInput;
 					travel_fileInputText.setText(travel_fileInput.toString());
-					String outname = travel_fileInput.getName();
-					travel_fileOutput = new File(travel_fileInput.getParent() + File.separator
-							+ outname.substring(0, outname.lastIndexOf("."))
-							+ UUID.randomUUID().toString().substring(8, 13)
-							+ outname.substring(outname.lastIndexOf(".")));
+					travel_fileOutput = addSuffixFile(travel_fileInput);
 					travel_fileOutputText.setText("Proposed file: " + travel_fileOutput.toString());
 					startBtn.setEnabled(true);
 					travel_selectOutputFileBtn.setEnabled(true);
