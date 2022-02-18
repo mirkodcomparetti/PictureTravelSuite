@@ -153,6 +153,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	private JPanel travel_genericPanel;
 	private JCheckBox travel_joinChckbx;
 	private JCheckBox travel_mergeChckbx;
+	private JTextField travel_mergeText;
 	private JCheckBox travel_tracksChckbx;
 
 	private JPanel travel_filterPanel;
@@ -839,34 +840,42 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_genericPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		travel_genericPanel.setLocation(0, 0);
 		travel_genericPanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
-				(int) (3 * singleObjectDimension.getHeight() + 4 * singleSpacerDimension.getHeight())));
+				(int) (4 * singleObjectDimension.getHeight() + 5 * singleSpacerDimension.getHeight())));
 		travel_genericPanel.setMaximumSize(new Dimension((int) singleObjectDimension.getWidth(),
-				(int) (3 * singleObjectDimension.getHeight() + 4 * singleSpacerDimension.getHeight())));
+				(int) (4 * singleObjectDimension.getHeight() + 5 * singleSpacerDimension.getHeight())));
 		travel_genericPanel.setLayout(null);
 		travel_commandsPanel.add(travel_genericPanel);
 
 		travel_joinChckbx = new JCheckBox("Join files");
 		travel_joinChckbx.setToolTipText("Join all files in the selected folder");
-		travel_genericPanel.add(travel_joinChckbx);
 		travel_joinChckbx.setSize(singleObjectDimension);
 		travel_joinChckbx.setMaximumSize(singleObjectDimension);
 		travel_joinChckbx.setLocation(0, 0);
+		travel_genericPanel.add(travel_joinChckbx);
 
 		travel_mergeChckbx = new JCheckBox("Merge tracks");
 		travel_mergeChckbx.setToolTipText("Join all tracks into one");
-		travel_genericPanel.add(travel_mergeChckbx);
 		travel_mergeChckbx.setSize(singleObjectDimension);
 		travel_mergeChckbx.setMaximumSize(singleObjectDimension);
 		travel_mergeChckbx.setLocation(0,
 				(int) (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight()));
+		travel_genericPanel.add(travel_mergeChckbx);
+
+		travel_mergeText = new JTextField("Travel");
+		travel_mergeText.setToolTipText("Join all tracks into one");
+		travel_mergeText.setSize(singleObjectDimension);
+		travel_mergeText.setMaximumSize(singleObjectDimension);
+		travel_mergeText.setLocation(0,
+				(int) (2 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())));
+		travel_genericPanel.add(travel_mergeText);
 
 		travel_tracksChckbx = new JCheckBox("Keep only tracks");
 		travel_tracksChckbx.setToolTipText("Remove routes and waypoints");
-		travel_genericPanel.add(travel_tracksChckbx);
 		travel_tracksChckbx.setSize(singleObjectDimension);
 		travel_tracksChckbx.setMaximumSize(singleObjectDimension);
 		travel_tracksChckbx.setLocation(0,
-				(int) (2 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())));
+				(int) (3 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())));
+		travel_genericPanel.add(travel_tracksChckbx);
 
 		travel_filterPanel = new JPanel();
 		travel_filterPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -1254,7 +1263,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configPropsDefault.setProperty("travel_simplifyGmaps", configurationBoolean[1]);
 			configPropsDefault.setProperty("travel_faketime", configurationBoolean[1]);
 			configPropsDefault.setProperty("travel_cleanup", configurationBoolean[1]);
-			
 		} else {
 			configProps.setProperty("picture_author", picture_photographerText.getText());
 			configProps.setProperty("picture_copyright",
@@ -1928,7 +1936,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-f");
 		commandArray.add(inFile.getAbsolutePath());
 		commandArray.add("-x");
-		commandArray.add("track,merge,title=\"Travel\"");
+		commandArray.add("track,merge,title=\""+ travel_mergeText.getText() +"\"");
 		commandArray.add("-o");
 		commandArray.add(gpsTypeFromExtension(outFile));
 		commandArray.add("-F");
