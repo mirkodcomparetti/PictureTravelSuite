@@ -166,8 +166,9 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	private JComboBox<String> travel_simplifyValue;
 	private JCheckBox travel_simplifyGmapsChckbx;
 
-	private JPanel travel_timePanel;
+	private JPanel travel_refinementPanel;
 	private JCheckBox travel_timeChckbx;
+	private JCheckBox travel_cleanChckbx;
 
 	private Dimension singleObjectDimension = new Dimension(125, 40);
 	private Dimension singleSpacerDimension = new Dimension(10, 10);
@@ -285,6 +286,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_filterChckbx.setEnabled(false);
 		travel_simplifyChckbx.setEnabled(false);
 		travel_timeChckbx.setEnabled(false);
+		travel_cleanChckbx.setEnabled(false);
 	}
 
 	private void initialize() {
@@ -956,24 +958,31 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				(int) (2 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())));
 		travel_simplifyPanel.add(travel_simplifyGmapsChckbx);
 
-		travel_timePanel = new JPanel();
-		travel_timePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		travel_timePanel
+		travel_refinementPanel = new JPanel();
+		travel_refinementPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		travel_refinementPanel
 				.setLocation((int) (3 * singleObjectDimension.getWidth() + 4 * singleSpacerDimension.getWidth()), 0);
-		travel_timePanel.setSize(
-				new Dimension((int) singleObjectDimension.getWidth(), (int) singleObjectDimension.getHeight()));
-		travel_timePanel.setMaximumSize(
-				new Dimension((int) singleObjectDimension.getWidth(), (int) singleObjectDimension.getHeight()));
-		travel_timePanel.setLayout(null);
+		travel_refinementPanel.setSize(new Dimension((int) singleObjectDimension.getWidth(),
+				(int) (3 * singleObjectDimension.getHeight() + 4 * singleSpacerDimension.getHeight())));
+		travel_refinementPanel.setMaximumSize(new Dimension((int) singleObjectDimension.getWidth(),
+				(int) (3 * singleObjectDimension.getHeight() + 4 * singleSpacerDimension.getHeight())));
+		travel_refinementPanel.setLayout(null);
+
+		travel_cleanChckbx = new JCheckBox("Clean-up data");
+		travel_cleanChckbx.setToolTipText("Clean the GPS data");
+		travel_cleanChckbx.setSize(singleObjectDimension);
+		travel_cleanChckbx.setMaximumSize(singleObjectDimension);
+		travel_cleanChckbx.setLocation(0, 0);
+		travel_refinementPanel.add(travel_cleanChckbx);
 
 		travel_timeChckbx = new JCheckBox("Fake time");
 		travel_timeChckbx.setToolTipText("Recalculate the track with a fake time");
-		travel_timePanel.add(travel_timeChckbx);
 		travel_timeChckbx.setSize(singleObjectDimension);
 		travel_timeChckbx.setMaximumSize(singleObjectDimension);
-		travel_timeChckbx.setLocation(0, 0);
-		travel_timePanel.add(travel_timeChckbx);
-		travel_commandsPanel.add(travel_timePanel);
+		travel_timeChckbx.setLocation(0, (int) (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight()));
+		travel_refinementPanel.add(travel_timeChckbx);
+
+		travel_commandsPanel.add(travel_refinementPanel);
 
 		progressPanel = new JPanel();
 		progressPanel.setBounds((int) (mainTab.getLocation().x),
@@ -1209,6 +1218,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				.setSelected(configProps.getProperty("travel_simplifyGmaps").compareTo(configurationBoolean[0]) == 0);
 		travel_timeChckbx
 				.setSelected(configProps.getProperty("travel_faketime").compareTo(configurationBoolean[0]) == 0);
+		travel_cleanChckbx
+				.setSelected(configProps.getProperty("travel_cleanup").compareTo(configurationBoolean[0]) == 0);
 	}
 
 	private void ResetConfigProps(boolean defaultValues) {
@@ -1242,6 +1253,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configPropsDefault.setProperty("travel_simplifyValue", "15000");
 			configPropsDefault.setProperty("travel_simplifyGmaps", configurationBoolean[1]);
 			configPropsDefault.setProperty("travel_faketime", configurationBoolean[1]);
+			configPropsDefault.setProperty("travel_cleanup", configurationBoolean[1]);
+			
 		} else {
 			configProps.setProperty("picture_author", picture_photographerText.getText());
 			configProps.setProperty("picture_copyright",
@@ -1288,6 +1301,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 					travel_simplifyGmapsChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("travel_faketime",
 					travel_timeChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
+			configProps.setProperty("travel_cleanup",
+					travel_cleanChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 		}
 	}
 
@@ -1913,7 +1928,32 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-f");
 		commandArray.add(inFile.getAbsolutePath());
 		commandArray.add("-x");
-		commandArray.add("track,merge");
+		commandArray.add("track,merge,title=\"Travel\"");
+		commandArray.add("-o");
+		commandArray.add(gpsTypeFromExtension(outFile));
+		commandArray.add("-F");
+		commandArray.add(outFile.getAbsolutePath());
+
+		executeCommand(commandArray.toArray(new String[0]));
+	}
+
+	private void command_TravelCleanup(File inFile, File outFile) {
+		if (!this.isRunning)
+			return;
+		addToLog("Filtering datapoints of " + inFile.toString());
+
+		List<String> commandArray = new ArrayList<String>();
+		commandArray.add(cmdExecutables.get("gpsbabel").toString());
+		commandArray.add("-i");
+		commandArray.add(gpsTypeFromExtension(inFile));
+		commandArray.add("-f");
+		commandArray.add(inFile.getAbsolutePath());
+		commandArray.add("-x");
+		commandArray.add("duplicate,location,shortname");
+		commandArray.add("-x");
+		commandArray.add("resample,average=2");
+		commandArray.add("-x");
+		commandArray.add("track,speed,course,merge,discard");
 		commandArray.add("-o");
 		commandArray.add(gpsTypeFromExtension(outFile));
 		commandArray.add("-F");
@@ -1936,8 +1976,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-x");
 		commandArray.add("position,distance="
 				+ ((double) Integer.parseInt(travel_filterValue.getSelectedItem().toString())) + "m");
-		commandArray.add("-x");
-		commandArray.add("duplicate,location,shortname");
 		commandArray.add("-x");
 		commandArray.add("simplify,crosstrack,error="
 				+ ((double) Integer.parseInt(travel_filterValue.getSelectedItem().toString()) / 1000.0) + "k");
@@ -2234,6 +2272,13 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 							workFile.delete();
 						workFile = outFile;
 					}
+					if (travel_cleanChckbx.isSelected()) {
+						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "clean");
+						command_TravelCleanup(workFile, outFile);
+						if (workFile != travel_fileInput)
+							workFile.delete();
+						workFile = outFile;
+					}
 					if (travel_fileOutput.exists())
 						travel_fileOutput = addSuffixFile(travel_fileOutput,
 								UUID.randomUUID().toString().substring(8, 13));
@@ -2291,7 +2336,8 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			}
 			if (!(travel_joinChckbx.isSelected() || travel_mergeChckbx.isSelected() || travel_tracksChckbx.isSelected()
 					|| travel_filterChckbx.isSelected() || travel_simplifyChckbx.isSelected()
-					|| travel_timeChckbx.isSelected() || travel_simplifyChckbx.isSelected())) {
+					|| travel_cleanChckbx.isSelected() || travel_timeChckbx.isSelected()
+					|| travel_simplifyChckbx.isSelected())) {
 				System.out.println("No process selected");
 				addToLog("ERROR: No process selected.", Color.RED, false);
 				return false;
@@ -2348,6 +2394,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_filterChckbx.setEnabled(enabled);
 		travel_simplifyChckbx.setEnabled(enabled);
 		travel_timeChckbx.setEnabled(enabled);
+		travel_cleanChckbx.setEnabled(enabled);
 
 		if (enabled) {
 			picture_WatermarkDataEnable(picture_watermarkChckbx.isSelected());
