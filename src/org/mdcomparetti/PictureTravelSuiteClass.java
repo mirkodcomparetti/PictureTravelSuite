@@ -153,7 +153,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 	private JPanel travel_genericPanel;
 	private JCheckBox travel_joinChckbx;
 	private JCheckBox travel_mergeChckbx;
-	private JTextField travel_mergeText;
+	private JTextField travel_mergeTrackNameText;
 	private JCheckBox travel_tracksChckbx;
 
 	private JPanel travel_filterPanel;
@@ -229,6 +229,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		picture_ColorProfileDataEnable(
 				configProps.getProperty("picture_cprofile").compareTo(configurationBoolean[0]) == 0);
 
+		travel_MergeDataEnable(configProps.getProperty("travel_merge").compareTo(configurationBoolean[0]) == 0);
 		travel_FilterDataEnable(configProps.getProperty("travel_filter").compareTo(configurationBoolean[0]) == 0);
 		travel_SimplifyDataEnable(configProps.getProperty("travel_simplify").compareTo(configurationBoolean[0]) == 0);
 
@@ -288,6 +289,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		travel_simplifyChckbx.setEnabled(false);
 		travel_timeChckbx.setEnabled(false);
 		travel_cleanChckbx.setEnabled(false);
+
+		travel_MergeDataEnable(false);
+		travel_FilterDataEnable(false);
+		travel_SimplifyDataEnable(false);
 	}
 
 	private void initialize() {
@@ -855,19 +860,22 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 		travel_mergeChckbx = new JCheckBox("Merge tracks");
 		travel_mergeChckbx.setToolTipText("Join all tracks into one");
+		travel_mergeChckbx.setActionCommand("travel_merge");
+		travel_mergeChckbx.addActionListener(this);
 		travel_mergeChckbx.setSize(singleObjectDimension);
 		travel_mergeChckbx.setMaximumSize(singleObjectDimension);
 		travel_mergeChckbx.setLocation(0,
 				(int) (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight()));
 		travel_genericPanel.add(travel_mergeChckbx);
 
-		travel_mergeText = new JTextField("Travel");
-		travel_mergeText.setToolTipText("Join all tracks into one");
-		travel_mergeText.setSize(singleObjectDimension);
-		travel_mergeText.setMaximumSize(singleObjectDimension);
-		travel_mergeText.setLocation(0,
+		travel_mergeTrackNameText = new JTextField("Travel");
+		travel_mergeTrackNameText.setToolTipText("Join all tracks into one");
+		travel_mergeTrackNameText.setSize(singleObjectDimension);
+		travel_mergeTrackNameText.setEditable(true);
+		travel_mergeTrackNameText.setMaximumSize(singleObjectDimension);
+		travel_mergeTrackNameText.setLocation(0,
 				(int) (2 * (singleObjectDimension.getHeight() + singleSpacerDimension.getHeight())));
-		travel_genericPanel.add(travel_mergeText);
+		travel_genericPanel.add(travel_mergeTrackNameText);
 
 		travel_tracksChckbx = new JCheckBox("Keep only tracks");
 		travel_tracksChckbx.setToolTipText("Remove routes and waypoints");
@@ -1215,6 +1223,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				.setSelected(configProps.getProperty("picture_resizeSizeUHD").compareTo(configurationBoolean[0]) == 0);
 
 		travel_mergeChckbx.setSelected(configProps.getProperty("travel_merge").compareTo(configurationBoolean[0]) == 0);
+		travel_mergeTrackNameText.setText(configProps.getProperty("travel_mergeTrackName"));
 		travel_tracksChckbx
 				.setSelected(configProps.getProperty("travel_tracks").compareTo(configurationBoolean[0]) == 0);
 		travel_filterChckbx
@@ -1255,6 +1264,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			configPropsDefault.setProperty("picture_resizeSizeUHD", configurationBoolean[1]);
 
 			configPropsDefault.setProperty("travel_merge", configurationBoolean[1]);
+			configPropsDefault.setProperty("travel_mergeTrackName", "Trip");
 			configPropsDefault.setProperty("travel_tracks", configurationBoolean[1]);
 			configPropsDefault.setProperty("travel_filter", configurationBoolean[1]);
 			configPropsDefault.setProperty("travel_filterValue", "50");
@@ -1297,6 +1307,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 			configProps.setProperty("travel_merge",
 					travel_mergeChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
+			configProps.setProperty("travel_mergeTrackName", travel_mergeTrackNameText.getText());
 			configProps.setProperty("travel_tracks",
 					travel_tracksChckbx.isSelected() ? configurationBoolean[0] : configurationBoolean[1]);
 			configProps.setProperty("travel_filter",
@@ -1541,6 +1552,10 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 
 	private void travel_FilterDataEnable(boolean enable) {
 		travel_filterValue.setEnabled(enable);
+	}
+
+	private void travel_MergeDataEnable(boolean enable) {
+		travel_mergeTrackNameText.setEnabled(enable);
 	}
 
 	private void travel_SimplifyDataEnable(boolean enable) {
@@ -1900,7 +1915,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-F");
 		commandArray.add(outFile.getAbsolutePath());
 
-		executeCommand(commandArray.toArray(new String[0]));
+		executeCommand(commandArray);
 	}
 
 	private void command_TravelOnlyTracks(File inFile, File outFile) {
@@ -1921,7 +1936,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-F");
 		commandArray.add(outFile.getAbsolutePath());
 
-		executeCommand(commandArray.toArray(new String[0]));
+		executeCommand(commandArray);
 	}
 
 	private void command_TravelMerge(File inFile, File outFile) {
@@ -1936,13 +1951,13 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-f");
 		commandArray.add(inFile.getAbsolutePath());
 		commandArray.add("-x");
-		commandArray.add("track,merge,title=\""+ travel_mergeText.getText() +"\"");
+		commandArray.add("track,merge,title=\"" + travel_mergeTrackNameText.getText() + "\"");
 		commandArray.add("-o");
 		commandArray.add(gpsTypeFromExtension(outFile));
 		commandArray.add("-F");
 		commandArray.add(outFile.getAbsolutePath());
 
-		executeCommand(commandArray.toArray(new String[0]));
+		executeCommand(commandArray);
 	}
 
 	private void command_TravelCleanup(File inFile, File outFile) {
@@ -1967,7 +1982,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-F");
 		commandArray.add(outFile.getAbsolutePath());
 
-		executeCommand(commandArray.toArray(new String[0]));
+		executeCommand(commandArray);
 	}
 
 	private void command_TravelFilter(File inFile, File outFile) {
@@ -1992,7 +2007,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-F");
 		commandArray.add(outFile.getAbsolutePath());
 
-		executeCommand(commandArray.toArray(new String[0]));
+		executeCommand(commandArray);
 	}
 
 	private void command_TravelSimplify(File inFile, File outFile) {
@@ -2016,7 +2031,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-F");
 		commandArray.add(outFile.getAbsolutePath());
 
-		executeCommand(commandArray.toArray(new String[0]));
+		executeCommand(commandArray);
 	}
 
 	private void command_TravelFaketime(File inFile, File outFile) {
@@ -2037,7 +2052,11 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		commandArray.add("-F");
 		commandArray.add(outFile.getAbsolutePath());
 
-		executeCommand(commandArray.toArray(new String[0]));
+		executeCommand(commandArray);
+	}
+
+	private String executeCommand(List<String> commandArray) {
+		return executeCommand(commandArray.toArray(new String[0]));
 	}
 
 	private String executeCommand(String[] command) {
@@ -2273,16 +2292,16 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 							workFile.delete();
 						workFile = outFile;
 					}
-					if (travel_timeChckbx.isSelected()) {
-						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "time");
-						command_TravelFaketime(workFile, outFile);
+					if (travel_cleanChckbx.isSelected()) {
+						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "clean");
+						command_TravelCleanup(workFile, outFile);
 						if (workFile != travel_fileInput)
 							workFile.delete();
 						workFile = outFile;
 					}
-					if (travel_cleanChckbx.isSelected()) {
-						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "clean");
-						command_TravelCleanup(workFile, outFile);
+					if (travel_timeChckbx.isSelected()) {
+						outFile = addSuffixFile(workFile, UUID.randomUUID().toString().substring(8, 13) + "time");
+						command_TravelFaketime(workFile, outFile);
 						if (workFile != travel_fileInput)
 							workFile.delete();
 						workFile = outFile;
@@ -2344,8 +2363,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			}
 			if (!(travel_joinChckbx.isSelected() || travel_mergeChckbx.isSelected() || travel_tracksChckbx.isSelected()
 					|| travel_filterChckbx.isSelected() || travel_simplifyChckbx.isSelected()
-					|| travel_cleanChckbx.isSelected() || travel_timeChckbx.isSelected()
-					|| travel_simplifyChckbx.isSelected())) {
+					|| travel_cleanChckbx.isSelected() || travel_timeChckbx.isSelected())) {
 				System.out.println("No process selected");
 				addToLog("ERROR: No process selected.", Color.RED, false);
 				return false;
@@ -2410,6 +2428,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			picture_FrameDataEnable(picture_frameChckbx.isSelected());
 			picture_ColorProfileDataEnable(picture_colorProfileChckbx.isSelected());
 
+			travel_MergeDataEnable(travel_mergeChckbx.isSelected());
 			travel_FilterDataEnable(travel_filterChckbx.isSelected());
 			travel_SimplifyDataEnable(travel_simplifyChckbx.isSelected());
 		} else {
@@ -2418,6 +2437,7 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 			picture_FrameDataEnable(false);
 			picture_ColorProfileDataEnable(false);
 
+			travel_MergeDataEnable(false);
 			travel_FilterDataEnable(false);
 			travel_SimplifyDataEnable(false);
 		}
@@ -2521,6 +2541,11 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 				picture_ResizeCustomEnable(!picture_resizeUltraHDChckbx.isSelected(), "fullhd");
 			}
 			break;
+		case "travel_merge":
+			if (evt.getSource() == travel_mergeChckbx) {
+				travel_MergeDataEnable(travel_mergeChckbx.isSelected());
+			}
+			break;
 		case "travel_filter":
 			if (evt.getSource() == travel_filterChckbx) {
 				travel_FilterDataEnable(travel_filterChckbx.isSelected());
@@ -2539,7 +2564,6 @@ public class PictureTravelSuiteClass extends JPanel implements ActionListener, P
 		default:
 			addToLog("Action not recognized.");
 			break;
-
 		}
 	}
 
